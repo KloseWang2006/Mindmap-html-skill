@@ -1,0 +1,328 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>第一章 Basic Structure of Computers - 思维导图</title>
+  <style>
+    :root {
+      --bg: #f6f8fb;
+      --ink: #172033;
+      --muted: #637083;
+      --line: #cfd8e3;
+      --blue: #2563eb;
+      --blue-soft: #eaf1ff;
+      --green: #15803d;
+      --green-soft: #e9f8ef;
+      --orange: #c2410c;
+      --orange-soft: #fff1e8;
+      --violet: #6d28d9;
+      --violet-soft: #f1eaff;
+      --card: #ffffff;
+      --shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", Arial, sans-serif;
+      color: var(--ink);
+      background: var(--bg);
+      line-height: 1.55;
+    }
+
+    header {
+      padding: 28px 24px 16px;
+      max-width: 1180px;
+      margin: 0 auto;
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: clamp(26px, 4vw, 42px);
+      line-height: 1.15;
+      letter-spacing: 0;
+    }
+
+    .subtitle {
+      margin: 0;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .toolbar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      max-width: 1180px;
+      margin: 0 auto 18px;
+      padding: 0 24px;
+    }
+
+    button {
+      border: 1px solid #d6deea;
+      background: #fff;
+      color: var(--ink);
+      border-radius: 8px;
+      padding: 8px 12px;
+      font-size: 14px;
+      cursor: pointer;
+      box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+    }
+
+    button:hover { border-color: #a8b5c8; }
+
+    main {
+      max-width: 1180px;
+      margin: 0 auto 36px;
+      padding: 0 24px 24px;
+    }
+
+    .mindmap {
+      background: var(--card);
+      border: 1px solid #e3e9f2;
+      border-radius: 8px;
+      box-shadow: var(--shadow);
+      padding: 22px;
+      overflow-x: auto;
+    }
+
+    .tree,
+    .tree ul {
+      margin: 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    .tree ul {
+      margin-left: 28px;
+      padding-left: 22px;
+      border-left: 2px solid var(--line);
+    }
+
+    .tree li {
+      position: relative;
+      margin: 12px 0;
+    }
+
+    .tree li::before {
+      content: "";
+      position: absolute;
+      left: -22px;
+      top: 18px;
+      width: 20px;
+      height: 2px;
+      background: var(--line);
+    }
+
+    .tree > li::before { display: none; }
+
+    .node {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      max-width: 760px;
+      padding: 8px 11px;
+      border-radius: 8px;
+      border: 1px solid #dbe4f0;
+      background: #fff;
+      box-shadow: 0 2px 8px rgba(15, 23, 42, 0.04);
+      vertical-align: top;
+    }
+
+    .root {
+      font-size: 20px;
+      font-weight: 700;
+      color: #0f1f3d;
+      background: #edf4ff;
+      border-color: #b8cdf8;
+    }
+
+    .module {
+      font-weight: 700;
+    }
+
+    .blue { background: var(--blue-soft); border-color: #bdd1ff; color: #163b8f; }
+    .green { background: var(--green-soft); border-color: #b9e4c8; color: #14532d; }
+    .orange { background: var(--orange-soft); border-color: #ffd0b7; color: #8a2f0a; }
+    .violet { background: var(--violet-soft); border-color: #d7c3ff; color: #4c1d95; }
+
+    .toggle {
+      width: 22px;
+      height: 22px;
+      padding: 0;
+      display: inline-grid;
+      place-items: center;
+      border-radius: 999px;
+      border: 1px solid currentColor;
+      background: rgba(255, 255, 255, 0.7);
+      color: inherit;
+      font-weight: 700;
+      line-height: 1;
+      flex: 0 0 auto;
+    }
+
+    .leaf .toggle {
+      visibility: hidden;
+    }
+
+    .collapsed > ul {
+      display: none;
+    }
+
+    .note {
+      color: var(--muted);
+      font-size: 13px;
+      margin-left: 6px;
+    }
+
+    @media (max-width: 720px) {
+      header,
+      main,
+      .toolbar { padding-left: 14px; padding-right: 14px; }
+      .mindmap { padding: 14px; }
+      .tree ul { margin-left: 16px; padding-left: 18px; }
+      .tree li::before { left: -18px; width: 16px; }
+      .node { max-width: 620px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>第一章：Basic Structure of Computers</h1>
+    <p class="subtitle">根据课件 Chapter 1 整理，围绕计算机类型、五大功能部件、程序执行和计算机世代展开。</p>
+  </header>
+
+  <div class="toolbar" aria-label="思维导图控制">
+    <button type="button" id="expandAll">全部展开</button>
+    <button type="button" id="collapseAll">折叠到模块</button>
+  </div>
+
+  <main>
+    <section class="mindmap" aria-label="第一章思维导图">
+      <ul class="tree">
+        <li>
+          <span class="node root"><button class="toggle" type="button" aria-label="切换节点">-</button>Basic Structure of Computers</span>
+          <ul>
+            <li>
+              <span class="node module blue"><button class="toggle" type="button" aria-label="切换节点">-</button>Computer Types</span>
+              <ul>
+                <li><span class="node leaf">分类依据<span class="note">size, cost, computational power, intended use</span></span></li>
+                <li>
+                  <span class="node"><button class="toggle" type="button" aria-label="切换节点">-</button>Embedded computers</span>
+                  <ul>
+                    <li><span class="node leaf">集成在更大的设备或系统中</span></li>
+                    <li><span class="node leaf">自动监测和控制物理过程或环境</span></li>
+                    <li><span class="node leaf">面向特定用途：工业/家庭自动化、家电、通信产品、车辆</span></li>
+                  </ul>
+                </li>
+                <li>
+                  <span class="node"><button class="toggle" type="button" aria-label="切换节点">-</button>Personal computers</span>
+                  <ul>
+                    <li><span class="node leaf">主要供个人专用</span></li>
+                    <li><span class="node leaf">支持通用计算、文档处理、CAD、影音娱乐等应用</span></li>
+                    <li><span class="node leaf">包括台式机、工作站、便携式和笔记本电脑</span></li>
+                  </ul>
+                </li>
+                <li>
+                  <span class="node"><button class="toggle" type="button" aria-label="切换节点">-</button>Server & Enterprise systems</span>
+                  <ul>
+                    <li><span class="node leaf">面向大量用户，通过公有或私有网络共享</span></li>
+                    <li><span class="node leaf">拥有大型数据库存储能力</span></li>
+                    <li><span class="node leaf">处理大量数据访问请求，用于企业和政府信息处理</span></li>
+                  </ul>
+                </li>
+                <li>
+                  <span class="node"><button class="toggle" type="button" aria-label="切换节点">-</button>Supercomputers & Grid computers</span>
+                  <ul>
+                    <li><span class="node leaf">Supercomputers：最高性能，服务天气预报、工程设计、科学计算</span></li>
+                    <li><span class="node leaf">Grid computers：把大量个人计算机和磁盘通过高速分布式网络组合</span></li>
+                    <li><span class="node leaf">中国超算示例：银河一号、曙光一号、天河一号/二号、神威太湖之光等</span></li>
+                  </ul>
+                </li>
+                <li><span class="node leaf">Cloud Computing：基于 Internet 按需提供共享资源、软件和信息</span></li>
+              </ul>
+            </li>
+
+            <li>
+              <span class="node module green"><button class="toggle" type="button" aria-label="切换节点">-</button>Five Basic Functional Units</span>
+              <ul>
+                <li><span class="node leaf">基本功能：Data Processing, Data Storage, Data Movement, Control</span></li>
+                <li><span class="node leaf">Input Unit：接收编码信息；设备包括键盘、触摸板、鼠标、操纵杆、轨迹球、相机、麦克风、网络通信设施等</span></li>
+                <li><span class="node leaf">Output Unit：把处理结果送到外部世界；设备包括打印机、图形显示器等</span></li>
+                <li>
+                  <span class="node"><button class="toggle" type="button" aria-label="切换节点">-</button>Memory</span>
+                  <ul>
+                    <li><span class="node leaf">存储程序和数据</span></li>
+                    <li><span class="node leaf">Primary Storage：程序执行时所在的主存；关键词 Word, Word Length, Address, RAM, Memory Access Time</span></li>
+                    <li><span class="node leaf">Cache Memory：更小更快的 RAM，保存当前执行的程序片段和所需数据</span></li>
+                    <li><span class="node leaf">Secondary Storage：保存大量程序和不常访问数据，如磁盘、磁带、光盘、Flash</span></li>
+                  </ul>
+                </li>
+                <li><span class="node leaf">ALU：执行算术和逻辑运算，通常在处理器内完成大部分运算</span></li>
+                <li><span class="node leaf">Control Unit：协调其他部件，发送控制信号并感知各部件状态</span></li>
+                <li><span class="node leaf">关系：I/O Unit 包括输入和输出；Processor 包括 ALU 和 Control Unit</span></li>
+              </ul>
+            </li>
+
+            <li>
+              <span class="node module orange"><button class="toggle" type="button" aria-label="切换节点">-</button>Program Execution</span>
+              <ul>
+                <li><span class="node leaf">计算机处理的信息：instructions and data</span></li>
+                <li><span class="node leaf">Instruction：控制计算机内部以及与 I/O 设备之间的信息传送，并指定算术/逻辑操作</span></li>
+                <li><span class="node leaf">Program：完成任务的指令列表，存放在 memory 中</span></li>
+                <li><span class="node leaf">Instruction Cycle：Fetch Instruction + Execute Instruction；不断重复取指和执行</span></li>
+                <li><span class="node leaf">PC：指向下一条将被执行的指令</span></li>
+                <li><span class="node leaf">IR：保存当前正在执行的指令</span></li>
+                <li><span class="node leaf">指令示例：Load R2, LOC；Store R4, LOC；Add R4, R2, R3</span></li>
+                <li><span class="node leaf">Interrupt：I/O 设备向处理器发出的服务请求；执行流程中需检查和处理中断</span></li>
+              </ul>
+            </li>
+
+            <li>
+              <span class="node module violet"><button class="toggle" type="button" aria-label="切换节点">-</button>Computer Generations</span>
+              <ul>
+                <li><span class="node leaf">Zero Generation：Mechanical Computers, 1642-1945；Pascal、Leibniz、Babbage、Zuse Z1</span></li>
+                <li><span class="node leaf">First Generation：Vacuum Tubes, 1945-1955；ENIAC、stored-program concept、汇编语言、延迟线/磁芯/磁鼓存储</span></li>
+                <li><span class="node leaf">Second Generation：Transistors, 1955-1965；晶体管、磁芯和磁鼓广泛使用、磁盘、高级语言 Fortran、编译器</span></li>
+                <li><span class="node leaf">Third Generation：Integrated Circuits, 1965-1975；IC、集成电路存储器、微程序、并行、流水线、cache、virtual memory、IBM360、PDP-11</span></li>
+                <li><span class="node leaf">Fourth Generation：LSI & VLSI, 1975-；单芯片处理器/主存片段、个人电脑、嵌入式、笔记本、移动电话、FPGA、层次化存储</span></li>
+                <li><span class="node leaf">性能演进：真空管、晶体管、LSI/VLSI 带来数量级速度提升；体系结构上依赖 cache、pipelining 等</span></li>
+              </ul>
+            </li>
+          </ul>
+        </li>
+      </ul>
+    </section>
+  </main>
+
+  <script>
+    const tree = document.querySelector(".tree");
+
+    tree.addEventListener("click", (event) => {
+      const button = event.target.closest(".toggle");
+      if (!button) return;
+      const li = button.closest("li");
+      if (!li.querySelector(":scope > ul")) return;
+      li.classList.toggle("collapsed");
+      button.textContent = li.classList.contains("collapsed") ? "+" : "-";
+    });
+
+    function setCollapsed(level) {
+      document.querySelectorAll(".tree li").forEach((li) => {
+        const childList = li.querySelector(":scope > ul");
+        const button = li.querySelector(":scope > .node > .toggle");
+        if (!childList || !button) return;
+        const depth = li.parentElement.closest("li") ? 1 : 0;
+        const shouldCollapse = level === "modules" && depth >= 1;
+        li.classList.toggle("collapsed", shouldCollapse);
+        button.textContent = shouldCollapse ? "+" : "-";
+      });
+    }
+
+    document.getElementById("expandAll").addEventListener("click", () => setCollapsed("none"));
+    document.getElementById("collapseAll").addEventListener("click", () => setCollapsed("modules"));
+  </script>
+</body>
+</html>

@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第三章 存储系统 - 脉络大纲</title>
+    <style>
+        :root {
+            --bg: #f8f9fb;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --accent: #0f766e;
+            --accent-light: #ecfdf5;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+            --radius: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 40px 24px 80px;
+        }
+        .container { max-width: 920px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 44px; }
+        .chapter-tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        h1 { font-size: 32px; font-weight: 750; margin-bottom: 8px; }
+        .subtitle { font-size: 15px; color: var(--text-secondary); }
+        .flow-diagram, .overview, .section, .comparison {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .flow-diagram { padding: 30px 28px; margin-bottom: 34px; text-align: center; }
+        .flow-diagram h3 { font-size: 15px; color: var(--text-secondary); margin-bottom: 22px; }
+        .flow-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0; }
+        .flow-box {
+            min-width: 132px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .flow-box small { display: block; font-weight: 500; font-size: 11px; margin-top: 2px; }
+        .flow-connector { color: #9ca3af; padding: 0 7px; }
+        .base { background: #f3f4f6; color: #4b5563; }
+        .ram { background: #eef2ff; color: #4f46e5; }
+        .hier { background: #ecfeff; color: #0891b2; }
+        .cache { background: #fff7ed; color: #ea580c; }
+        .vm { background: #ecfdf5; color: #059669; }
+        .overview {
+            padding: 24px 28px;
+            margin-bottom: 34px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .overview-item { font-size: 14px; color: var(--text-secondary); }
+        .overview-item b { color: var(--text); }
+        .section { margin-bottom: 24px; overflow: hidden; transition: box-shadow .2s; }
+        .section:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .section-header { display: flex; align-items: center; gap: 14px; padding: 21px 28px; border-bottom: 1px solid var(--border); }
+        .num {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-header h2 { font-size: 18px; flex: 1; }
+        .badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 14px; white-space: nowrap; }
+        .section-body { padding: 24px 28px 28px; }
+        .core-question {
+            background: #fefce8;
+            border-left: 3px solid #eab308;
+            padding: 10px 16px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400e;
+        }
+        .core-question span { font-weight: 500; color: #a16207; }
+        .subsection { margin-bottom: 16px; }
+        .subsection:last-child { margin-bottom: 0; }
+        .subsection-title { font-size: 14px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 7px; }
+        .subsection-title::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        ul { list-style: none; padding-left: 18px; }
+        li { font-size: 14px; color: var(--text-secondary); position: relative; padding: 2px 0 2px 14px; }
+        li::before { content: '-'; position: absolute; left: 0; color: #cbd5e1; }
+        li em { font-style: normal; font-weight: 700; color: #4b5563; }
+        .s1 .num, .s1 .subsection-title::before { background: #6b7280; }
+        .s1 .badge { color: #6b7280; background: #f3f4f6; }
+        .s2 .num, .s2 .subsection-title::before { background: #4f46e5; }
+        .s2 .badge { color: #4f46e5; background: #eef2ff; }
+        .s3 .num, .s3 .subsection-title::before { background: #0891b2; }
+        .s3 .badge { color: #0891b2; background: #ecfeff; }
+        .s4 .num, .s4 .subsection-title::before { background: #ea580c; }
+        .s4 .badge { color: #ea580c; background: #fff7ed; }
+        .s5 .num, .s5 .subsection-title::before { background: #059669; }
+        .s5 .badge { color: #059669; background: #ecfdf5; }
+        .comparison { padding: 28px; margin-top: 36px; }
+        .comparison h3 { text-align: center; font-size: 17px; margin-bottom: 18px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #f1f5f9; padding: 10px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+        td:first-child { font-weight: 700; color: var(--text); }
+        tr:last-child td { border-bottom: none; }
+        .footer { text-align: center; margin-top: 44px; font-size: 13px; color: #b7c0cc; }
+        @media (max-width: 700px) {
+            body { padding: 24px 12px 60px; }
+            h1 { font-size: 24px; }
+            .overview { grid-template-columns: 1fr; }
+            .section-header { padding: 16px 18px; }
+            .section-body { padding: 18px 18px 22px; }
+            .flow-row { flex-direction: column; gap: 5px; }
+            .flow-connector { transform: rotate(90deg); padding: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="chapter-tag">计算机组成原理 · 第三章</div>
+        <h1>存储系统</h1>
+        <p class="subtitle">The Memory System - 从存储单元到层次结构、Cache、虚拟内存与磁盘</p>
+    </div>
+
+    <div class="flow-diagram">
+        <h3>核心演进逻辑：容量、速度、成本无法同时最优，于是构造层次化存储</h3>
+        <div class="flow-row">
+            <div class="flow-box base">3-1<br><small>基础概念</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box ram">3-2 到 3-4<br><small>SRAM/DRAM 与扩展</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box hier">3-5<br><small>存储层次</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box cache">3-6<br><small>Cache</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box vm">3-7/3-8<br><small>虚拟内存与外存</small></div>
+        </div>
+    </div>
+
+    <div class="overview">
+        <div class="overview-item"><b>基础层：</b>地址、字长、字节序、读写接口决定 CPU 如何访问主存。</div>
+        <div class="overview-item"><b>器件层：</b>SRAM 快但贵，DRAM 密度高但需刷新。</div>
+        <div class="overview-item"><b>扩展层：</b>位扩展、字扩展、字位同时扩展解决芯片到主存的组合问题。</div>
+        <div class="overview-item"><b>层次层：</b>利用时间局部性和空间局部性制造“又快又大”的假象。</div>
+        <div class="overview-item"><b>Cache 层：</b>映射、标记、替换、写策略共同决定命中率和访问时间。</div>
+        <div class="overview-item"><b>虚存/外存层：</b>页表、TLB、磁盘访问时间把内存系统延伸到操作系统与外设。</div>
+    </div>
+
+    <div class="section s1">
+        <div class="section-header">
+            <div class="num">1</div>
+            <h2>主存基础：地址、字、字节序与访问过程</h2>
+            <span class="badge">3-1</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>CPU 看到的内存是什么样子？一次读写需要哪些信号和寄存器？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">地址空间与字节编址</div>
+                <ul>
+                    <li>地址用于标识 memory words 或 byte locations，k 位地址可表示 2^k 个位置。</li>
+                    <li>现代系统通常 byte-addressable，连续地址对应连续字节。</li>
+                    <li>Big-endian 低地址放高有效字节；little-endian 低地址放低有效字节。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">读写操作</div>
+                <ul>
+                    <li>读操作：CPU 把地址送入 MAR，设置 R/W=1，数据经 MDR 返回。</li>
+                    <li>写操作：CPU 把地址送入 MAR，把数据送入 MDR，设置 R/W=0。</li>
+                    <li>性能指标包括 access time、cycle time、transfer rate。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s2">
+        <div class="section-header">
+            <div class="num">2</div>
+            <h2>半导体存储器：SRAM 与 DRAM 的器件取舍</h2>
+            <span class="badge">3-2 到 3-4</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>为什么 Cache 常用 SRAM，而主存常用 DRAM？芯片如何扩展成更大存储器？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">SRAM</div>
+                <ul>
+                    <li>用触发器/锁存结构保存 bit，只要供电就能保持状态。</li>
+                    <li>优点是 fast；缺点是 low density、high cost。</li>
+                    <li>芯片组织题常考容量 M x N 与地址线、数据线数量。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">DRAM</div>
+                <ul>
+                    <li>用电容电荷保存 bit，读操作会刷新电容状态。</li>
+                    <li>优点是 high density、low cost；缺点是访问慢且需要 refresh。</li>
+                    <li>SDRAM 与时钟同步，DDR 在时钟双沿传输数据，提高带宽。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">存储器扩展</div>
+                <ul>
+                    <li>位扩展：芯片位宽不足，多个芯片并行扩展数据位。</li>
+                    <li>字扩展：芯片字数不足，用译码器选择不同芯片组。</li>
+                    <li>字位同时扩展：总片数 = (目标字数/芯片字数) x (目标位宽/芯片位宽)。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s3">
+        <div class="section-header">
+            <div class="num">3</div>
+            <h2>存储层次：用局部性弥合速度、容量、成本矛盾</h2>
+            <span class="badge">3-5</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>为什么单一级存储器不够？层次结构靠什么有效？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">理想存储器的不可能三角</div>
+                <ul>
+                    <li>理想目标是 zero latency、infinite capacity、zero cost。</li>
+                    <li>现实中 bigger is slower，faster is more expensive。</li>
+                    <li>层次结构从寄存器、L1/L2 Cache、主存到磁盘逐级变大、变慢、变便宜。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">局部性原理</div>
+                <ul>
+                    <li>时间局部性：最近访问过的数据很可能很快再次访问。</li>
+                    <li>空间局部性：访问某项数据后，附近数据可能很快被访问。</li>
+                    <li>上层存储保留近期块，下层按块搬运连续数据。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s4">
+        <div class="section-header">
+            <div class="num">4</div>
+            <h2>Cache：命中率、映射方式、替换与写策略</h2>
+            <span class="badge">3-6</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>主存块放到 Cache 哪里？如何找到？Miss 时换谁？写入时如何保持一致？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">Cache 基础</div>
+                <ul>
+                    <li>Cache 是小而快的 SRAM buffer，位于 CPU 和主存之间，由硬件自动管理。</li>
+                    <li>Hit 表示目标块在 Cache 中；miss 表示必须访问主存装入块。</li>
+                    <li>平均访问时间由 hit rate、cache access time 和 miss penalty 共同决定。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">三种映射</div>
+                <ul>
+                    <li>Direct mapping：每个主存块只能去一个 Cache line，简单便宜但冲突严重。</li>
+                    <li>Fully associative：主存块可去任意 line，冲突少但比较硬件复杂。</li>
+                    <li>Set associative：每个块映射到某个 set，可放入 set 内任一 line，折中最常用。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">替换与写策略</div>
+                <ul>
+                    <li>直接映射无替换选择；组相联/全相联常用 LRU、FIFO、Random。</li>
+                    <li>Write through 同时更新 Cache 和主存，一致性简单但写流量大。</li>
+                    <li>Write back 只先更新 Cache，并设置 dirty bit，替换时写回主存。</li>
+                    <li>Write miss 可选 no-write allocate 或 write allocate。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s5">
+        <div class="section-header">
+            <div class="num">5</div>
+            <h2>虚拟内存与外存：把存储系统扩展到磁盘</h2>
+            <span class="badge">3-7 到 3-8</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>程序为什么能拥有比物理内存更大的地址空间？磁盘访问时间由什么构成？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">虚拟内存与分页</div>
+                <ul>
+                    <li>Virtual memory 是抽象机制，用磁盘扩展物理内存的表观容量。</li>
+                    <li>虚拟地址分为 virtual page number 和 offset，页表把虚页映射到页框。</li>
+                    <li>Page fault 类似 Cache miss，但代价远高，由操作系统从磁盘调页。</li>
+                    <li>TLB 是页表项的小型高速缓存，TLB hit 可省掉一次页表访问。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">磁盘组织与访问时间</div>
+                <ul>
+                    <li>磁盘由盘片、盘面、磁道、扇区和柱面组织数据。</li>
+                    <li>同一柱面内切换磁道不需要移动磁头。</li>
+                    <li>Disk access time = seek time + rotational latency + transfer time。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="comparison">
+        <h3>第三章高频设计问题对照</h3>
+        <table>
+            <thead>
+                <tr><th>问题</th><th>核心公式/判断</th><th>对应小节</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>芯片扩展</td><td>总片数 = 字扩展倍数 x 位扩展倍数</td><td>3-4</td></tr>
+                <tr><td>Cache 地址划分</td><td>地址 = tag + line/set + word/byte offset</td><td>3-6</td></tr>
+                <tr><td>平均访问时间</td><td>tave = H x tc + (1-H) x tm 或等价 miss penalty 形式</td><td>3-6</td></tr>
+                <tr><td>分页地址划分</td><td>页大小决定 offset 位数，剩余高位为页号</td><td>3-7</td></tr>
+                <tr><td>磁盘访问</td><td>寻道时间 + 旋转等待 + 传输时间</td><td>3-8</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">第三章脉络大纲 · 依据 3-1 至 3-8 课件整理</div>
+</div>
+</body>
+</html>

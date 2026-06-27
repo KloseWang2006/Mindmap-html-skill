@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第一章 计算机基本结构 - 脉络大纲</title>
+    <style>
+        :root {
+            --bg: #f8f9fb;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --accent: #2563eb;
+            --accent-light: #eef3ff;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+            --radius: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 40px 24px 80px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 48px; }
+        .chapter-tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .subtitle { font-size: 15px; color: var(--text-secondary); }
+        .flow-diagram, .overview, .section, .comparison {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .flow-diagram { padding: 32px 28px; margin-bottom: 40px; text-align: center; }
+        .flow-diagram h3 { font-size: 15px; font-weight: 700; margin-bottom: 24px; color: var(--text-secondary); }
+        .flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .flow-box {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            min-width: 135px;
+        }
+        .flow-box small { display: block; font-size: 11px; font-weight: 400; margin-top: 2px; }
+        .flow-connector { font-size: 13px; color: #9ca3af; padding: 0 7px; white-space: nowrap; }
+        .flow-box.types { background: #eef2ff; color: #4f46e5; }
+        .flow-box.units { background: #ecfdf5; color: #059669; }
+        .flow-box.exec { background: #fff7ed; color: #ea580c; }
+        .flow-box.perf { background: #f5f3ff; color: #7c3aed; }
+        .overview {
+            padding: 28px 32px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+            align-items: center;
+            justify-content: center;
+        }
+        .overview .flow-item { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+        .overview .flow-arrow { color: #c0c8d4; font-size: 20px; font-weight: 300; }
+        .flow-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .section { margin-bottom: 24px; overflow: hidden; transition: box-shadow .2s; }
+        .section:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 22px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+        .num {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-header h2 { font-size: 18px; font-weight: 700; flex: 1; }
+        .badge { font-size: 11px; font-weight: 600; letter-spacing: .04em; padding: 4px 10px; border-radius: 14px; white-space: nowrap; }
+        .section-body { padding: 24px 28px 28px; }
+        .core-question {
+            background: #fefce8;
+            border-left: 3px solid #eab308;
+            padding: 10px 16px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+        }
+        .core-question span { font-weight: 400; color: #a16207; }
+        .subsection { margin-bottom: 16px; }
+        .subsection:last-child { margin-bottom: 0; }
+        .subsection-title {
+            font-size: 14px;
+            font-weight: 700;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .subsection-title::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        .subsection ul { list-style: none; padding-left: 18px; }
+        .subsection li { font-size: 14px; color: var(--text-secondary); position: relative; padding: 2px 0 2px 14px; }
+        .subsection li::before { content: '-'; position: absolute; left: 0; color: #cbd5e1; }
+        .subsection li em { font-style: normal; font-weight: 600; color: #4b5563; }
+        .s1 .num, .s1 .subsection-title::before { background: #4f46e5; }
+        .s1 .badge { color: #4f46e5; background: #eef2ff; }
+        .s2 .num, .s2 .subsection-title::before { background: #059669; }
+        .s2 .badge { color: #059669; background: #ecfdf5; }
+        .s3 .num, .s3 .subsection-title::before { background: #ea580c; }
+        .s3 .badge { color: #ea580c; background: #fff7ed; }
+        .s4 .num, .s4 .subsection-title::before { background: #7c3aed; }
+        .s4 .badge { color: #7c3aed; background: #f5f3ff; }
+        .comparison { padding: 28px; margin-top: 40px; }
+        .comparison h3 { font-size: 17px; font-weight: 700; margin-bottom: 18px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #f1f5f9; font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); }
+        td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        td:first-child { font-weight: 600; color: var(--text); }
+        .footer { text-align: center; margin-top: 48px; font-size: 13px; color: #c0c8d4; }
+        @media (max-width: 640px) {
+            body { padding: 24px 12px 60px; }
+            .header h1 { font-size: 24px; }
+            .section-header { padding: 16px 18px; }
+            .section-body { padding: 18px 18px 22px; }
+            .overview { padding: 20px; }
+            .flow-row { flex-direction: column; gap: 4px; }
+            .flow-connector { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="chapter-tag">计算机组成原理 · 第一章</div>
+        <h1>计算机基本结构</h1>
+        <p class="subtitle">Basic Structure of Computers - 从计算机类型到功能部件、程序执行与技术演进</p>
+    </div>
+
+    <div class="flow-diagram">
+        <h3>核心演进逻辑：先认识“计算机是什么”，再理解“它如何执行程序”</h3>
+        <div class="flow-row">
+            <div class="flow-box types">1.1<br><small>计算机类型</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box units">1.2<br><small>五大功能部件</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box exec">1.3<br><small>取指-执行循环</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box perf">1.6/1.7<br><small>性能与世代</small></div>
+        </div>
+    </div>
+
+    <div class="overview">
+        <div class="flow-item"><span class="flow-dot" style="background:#4f46e5;"></span>Computer Types</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#059669;"></span>Functional Units</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#ea580c;"></span>Program Execution</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#7c3aed;"></span>Performance & Generations</div>
+    </div>
+
+    <div class="section s1">
+        <div class="section-header">
+            <div class="num">1</div>
+            <h2>计算机类型：用途、规模与算力决定系统形态</h2>
+            <span class="badge">Computer Types</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>为什么“计算机”会从嵌入式设备到超级计算机呈现出完全不同的形态？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">分类依据</div>
+                <ul>
+                    <li>按 <em>size, cost, computational power, intended use</em> 区分不同计算机。</li>
+                    <li>不同类型的设计目标不同：有的追求低功耗和特定控制，有的追求通用性，有的追求吞吐量或极限算力。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">主要类型</div>
+                <ul>
+                    <li><em>Embedded computers</em>：集成到更大设备中，自动监测和控制物理过程。</li>
+                    <li><em>Personal computers</em>：面向个人通用应用，如文档、计算、CAD 和娱乐。</li>
+                    <li><em>Servers & Enterprise systems</em>：通过网络服务大量用户，处理大规模请求和数据库。</li>
+                    <li><em>Supercomputers & Grid computers</em>：面向天气预报、工程设计、科学计算等高性能任务。</li>
+                    <li><em>Cloud computing</em>：通过互联网按需提供共享资源、软件和信息。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s2">
+        <div class="section-header">
+            <div class="num">2</div>
+            <h2>五大功能部件：数据进入、存储、处理、输出和控制</h2>
+            <span class="badge">Functional Units</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>一台计算机完成任务，最少需要哪些功能单元协同？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">基本功能</div>
+                <ul>
+                    <li>数据处理：对 machine instructions、numbers、characters 等数字信息进行处理。</li>
+                    <li>数据存储：保存程序和数据。</li>
+                    <li>数据传送：在计算机内部以及计算机与外部环境之间传递信息。</li>
+                    <li>控制：协调所有部件按程序要求工作。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">五个基本功能单元</div>
+                <ul>
+                    <li><em>Input Unit</em>：接受编码信息，如键盘、鼠标、扫描仪等。</li>
+                    <li><em>Output Unit</em>：把处理结果送到外部，如显示器、打印机等。</li>
+                    <li><em>Memory</em>：保存正在执行的程序与数据，并通过 cache、main memory、secondary storage 分层组织。</li>
+                    <li><em>ALU</em>：执行算术和逻辑运算。</li>
+                    <li><em>Control Unit</em>：发出控制信号，感知各部件状态，协调操作顺序。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s3">
+        <div class="section-header">
+            <div class="num">3</div>
+            <h2>程序执行：PC 指向下一条，IR 保存当前条</h2>
+            <span class="badge">Operational Concepts</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>程序如何从内存中的指令序列变成处理器内部的一连串动作？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">指令与数据</div>
+                <ul>
+                    <li>计算机处理的信息包括 instructions 和 data。</li>
+                    <li>指令显式规定信息传送、算术逻辑运算、I/O 交互等动作。</li>
+                    <li>程序执行就是不断重复 instruction fetch 和 instruction execution。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">两个关键寄存器</div>
+                <ul>
+                    <li><em>PC</em>：Program Counter，指向下一条将要执行的指令。</li>
+                    <li><em>IR</em>：Instruction Register，保存当前正在执行的指令。</li>
+                    <li>典型执行循环：Fetch Instruction -> Execute Instruction -> 判断是否 Halt。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">中断的入口认识</div>
+                <ul>
+                    <li>Interrupt 是 I/O 设备向处理器提出服务请求。</li>
+                    <li>中断会打断普通取指-执行循环，引出后续 I/O 章节中的中断处理机制。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s4">
+        <div class="section-header">
+            <div class="num">4</div>
+            <h2>性能与世代：硬件技术推动计算机体系结构演进</h2>
+            <span class="badge">Performance</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>计算机性能为何不断提升？每一代技术替换解决了什么瓶颈？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">性能影响因素</div>
+                <ul>
+                    <li>最重要的性能指标是程序执行速度。</li>
+                    <li>性能受 instruction set、hardware、software 共同影响。</li>
+                    <li>VLSI 让晶体管更小，开关更快，也使更多功能集成到单芯片成为可能。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">计算机世代</div>
+                <ul>
+                    <li><em>Zero Generation</em>：机械计算机。</li>
+                    <li><em>First Generation</em>：真空管，代表 ENIAC；冯·诺依曼提出 stored-program concept。</li>
+                    <li><em>Second Generation</em>：晶体管，磁芯存储和磁鼓存储广泛使用。</li>
+                    <li><em>Third Generation</em>：集成电路，大量晶体管集成到硅片。</li>
+                    <li><em>Fourth Generation</em>：LSI & VLSI，微处理器、个人计算机、嵌入式系统快速发展。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="comparison">
+        <h3>第一章复习抓手</h3>
+        <table>
+            <thead>
+                <tr><th>主线</th><th>要抓住的问题</th><th>典型考点</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>计算机类型</td><td>不同应用场景如何影响设计目标</td><td>嵌入式、服务器、超算、云计算的区分</td></tr>
+                <tr><td>功能部件</td><td>五大功能单元如何协作完成程序任务</td><td>列举 input/output/memory/ALU/control unit</td></tr>
+                <tr><td>程序执行</td><td>PC、IR 与取指-执行循环</td><td>PC 指向下一条，IR 保存当前指令</td></tr>
+                <tr><td>历史世代</td><td>从机械、真空管、晶体管、集成电路到 VLSI</td><td>各世代标志性技术</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">第一章脉络大纲 · 依据 Chapter 1 课件与现有思维导图整理</div>
+</div>
+</body>
+</html>

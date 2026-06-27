@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第二章 算术运算 - 脉络大纲</title>
+    <style>
+        :root {
+            --bg: #f8f9fb;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --accent: #2563eb;
+            --accent-light: #eff6ff;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+            --radius: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 40px 24px 80px;
+        }
+        .container { max-width: 920px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 44px; }
+        .chapter-tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 700;
+            letter-spacing: .08em;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        h1 { font-size: 32px; font-weight: 750; margin-bottom: 8px; }
+        .subtitle { font-size: 15px; color: var(--text-secondary); }
+        .flow-diagram, .overview, .section, .comparison {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .flow-diagram { padding: 30px 28px; margin-bottom: 34px; text-align: center; }
+        .flow-diagram h3 { font-size: 15px; color: var(--text-secondary); margin-bottom: 22px; }
+        .flow-row { display: flex; justify-content: center; align-items: center; flex-wrap: wrap; gap: 0; }
+        .flow-box {
+            min-width: 132px;
+            padding: 10px 14px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+        }
+        .flow-box small { display: block; font-weight: 500; font-size: 11px; margin-top: 2px; }
+        .flow-connector { color: #9ca3af; padding: 0 7px; }
+        .repr { background: #eef2ff; color: #4f46e5; }
+        .add { background: #ecfeff; color: #0891b2; }
+        .mul { background: #fff7ed; color: #ea580c; }
+        .fp { background: #ecfdf5; color: #059669; }
+        .overview {
+            padding: 24px 28px;
+            margin-bottom: 34px;
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            gap: 14px;
+        }
+        .overview-item { font-size: 14px; color: var(--text-secondary); }
+        .overview-item b { color: var(--text); }
+        .section { margin-bottom: 24px; overflow: hidden; transition: box-shadow .2s; }
+        .section:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 21px 28px;
+            border-bottom: 1px solid var(--border);
+        }
+        .num {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            color: white;
+            font-weight: 800;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-header h2 { font-size: 18px; flex: 1; }
+        .badge { font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 14px; white-space: nowrap; }
+        .section-body { padding: 24px 28px 28px; }
+        .core-question {
+            background: #fefce8;
+            border-left: 3px solid #eab308;
+            padding: 10px 16px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: 700;
+            color: #92400e;
+        }
+        .core-question span { font-weight: 500; color: #a16207; }
+        .subsection { margin-bottom: 16px; }
+        .subsection:last-child { margin-bottom: 0; }
+        .subsection-title { font-size: 14px; font-weight: 800; margin-bottom: 6px; display: flex; align-items: center; gap: 7px; }
+        .subsection-title::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        ul { list-style: none; padding-left: 18px; }
+        li { font-size: 14px; color: var(--text-secondary); position: relative; padding: 2px 0 2px 14px; }
+        li::before { content: '-'; position: absolute; left: 0; color: #cbd5e1; }
+        li em { font-style: normal; font-weight: 700; color: #4b5563; }
+        .s1 .num, .s1 .subsection-title::before { background: #4f46e5; }
+        .s1 .badge { color: #4f46e5; background: #eef2ff; }
+        .s2 .num, .s2 .subsection-title::before { background: #0891b2; }
+        .s2 .badge { color: #0891b2; background: #ecfeff; }
+        .s3 .num, .s3 .subsection-title::before { background: #ea580c; }
+        .s3 .badge { color: #ea580c; background: #fff7ed; }
+        .s4 .num, .s4 .subsection-title::before { background: #059669; }
+        .s4 .badge { color: #059669; background: #ecfdf5; }
+        .comparison { padding: 28px; margin-top: 36px; }
+        .comparison h3 { text-align: center; font-size: 17px; margin-bottom: 18px; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #f1f5f9; padding: 10px 12px; text-align: left; border-bottom: 2px solid var(--border); }
+        td { padding: 10px 12px; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+        td:first-child { font-weight: 700; color: var(--text); }
+        tr:last-child td { border-bottom: none; }
+        .footer { text-align: center; margin-top: 44px; font-size: 13px; color: #b7c0cc; }
+        @media (max-width: 700px) {
+            body { padding: 24px 12px 60px; }
+            h1 { font-size: 24px; }
+            .overview { grid-template-columns: 1fr; }
+            .section-header { padding: 16px 18px; }
+            .section-body { padding: 18px 18px 22px; }
+            .flow-row { flex-direction: column; gap: 5px; }
+            .flow-connector { transform: rotate(90deg); padding: 0; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="chapter-tag">计算机组成原理 · 第二章</div>
+        <h1>算术运算</h1>
+        <p class="subtitle">Arithmetic - 从数的表示到整数运算硬件，再到浮点数标准与运算误差</p>
+    </div>
+
+    <div class="flow-diagram">
+        <h3>核心演进逻辑：先定义“数怎么放”，再讨论“运算怎么做得对、做得快”</h3>
+        <div class="flow-row">
+            <div class="flow-box repr">2-1<br><small>整数表示</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box add">2-2 到 2-4<br><small>加减法与加法器</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box mul">2-5 到 2-7<br><small>乘除法算法</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box fp">2-8 到 2-9<br><small>浮点表示与运算</small></div>
+        </div>
+    </div>
+
+    <div class="overview">
+        <div class="overview-item"><b>表示层：</b>无符号、原码、反码、补码，重点是范围、零的表示和符号扩展。</div>
+        <div class="overview-item"><b>加法层：</b>补码加减统一为二进制加法，溢出判断是考试核心。</div>
+        <div class="overview-item"><b>硬件层：</b>全加器、串行进位、先行进位，用延迟和成本解释设计取舍。</div>
+        <div class="overview-item"><b>算法层：</b>无符号乘法、Booth 乘法、恢复/不恢复除法，按寄存器状态迁移理解。</div>
+        <div class="overview-item"><b>浮点层：</b>IEEE 754 用符号位、阶码偏置、尾数表示实数近似。</div>
+        <div class="overview-item"><b>误差层：</b>对阶、舍入、规格化、保护位共同决定浮点运算结果。</div>
+    </div>
+
+    <div class="section s1">
+        <div class="section-header">
+            <div class="num">1</div>
+            <h2>整数表示：同一串 bit，解释方式决定数值</h2>
+            <span class="badge">2-1</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>机器如何表示正数、负数，以及为什么补码最适合做加减法？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">三种有符号表示</div>
+                <ul>
+                    <li><em>Signed-Magnitude</em>：最高位是符号，其余位表示绝对值，直观但运算麻烦。</li>
+                    <li><em>One's Complement</em>：负数由对应正数逐位取反得到，存在 +0 和 -0。</li>
+                    <li><em>Two's Complement</em>：负数由逐位取反再加 1 得到，只有一个 0，硬件加减最高效。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">范围与扩展</div>
+                <ul>
+                    <li>n 位无符号整数范围为 0 到 2^n - 1。</li>
+                    <li>n 位补码范围为 -2^(n-1) 到 2^(n-1) - 1，负数比正数多一个。</li>
+                    <li>补码扩展位长时做 <em>sign extension</em>：新高位填充原符号位。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s2">
+        <div class="section-header">
+            <div class="num">2</div>
+            <h2>加减法与加法器：正确性来自补码，速度瓶颈来自进位</h2>
+            <span class="badge">2-2 到 2-4</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>补码加法为什么能统一加减法？进位为什么决定硬件速度？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">补码加减法规则</div>
+                <ul>
+                    <li>补码加法：把符号位当作最高位一起加，忽略最高位 carry-out。</li>
+                    <li>减法 X - Y：先对 Y 求补码相反数，再执行 X + (-Y)。</li>
+                    <li>溢出只会发生在同号相加或异号相减时，结果符号异常即溢出。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">从全加器到串行进位</div>
+                <ul>
+                    <li>1-bit full adder 输入 xi、yi、ci，输出 si 和 ci+1。</li>
+                    <li>n-bit ripple-carry adder 把多个全加器串接，低位进位逐级传到高位。</li>
+                    <li>缺点是延迟随位数线性增长：最高位和最终进位都要等待前面级联完成。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">先行进位加法器</div>
+                <ul>
+                    <li>引入 generate Gi 和 propagate Pi，提前计算各级进位。</li>
+                    <li>Carry-lookahead adder 用更多逻辑门换取更短延迟。</li>
+                    <li>长字长加法器通常用 4-bit CLA 模块级联，受 fan-in / fan-out 限制。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s3">
+        <div class="section-header">
+            <div class="num">3</div>
+            <h2>乘除法算法：用移位、加减和寄存器状态完成复杂运算</h2>
+            <span class="badge">2-5 到 2-7</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>硬件如何把乘除法分解成可重复的加、减、移位步骤？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">无符号乘法</div>
+                <ul>
+                    <li>手算乘法按乘数每一位生成 partial product，n 位乘 n 位最多得到 2n 位积。</li>
+                    <li>Array multiplier 并行生成部分积，速度快但硬件数量多。</li>
+                    <li>Sequential multiplication 用一个加法器循环完成，硬件少但需要多个周期。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">Booth 有符号乘法</div>
+                <ul>
+                    <li>普通无符号乘法不能直接处理补码负数，Booth 算法统一处理正负乘数。</li>
+                    <li>观察 Q0 和 Q-1：01 加 M，10 减 M，00/11 只算术右移。</li>
+                    <li>连续 1 的乘数可减少加减次数，是 Booth 的效率来源。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">整数除法</div>
+                <ul>
+                    <li>恢复除法：试减为负则恢复 A，再置商位 0。</li>
+                    <li>不恢复除法：避免立即恢复，根据余数符号决定下一步加或减。</li>
+                    <li>课件强调没有像 Booth 那样简单统一的有符号除法算法。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s4">
+        <div class="section-header">
+            <div class="num">4</div>
+            <h2>浮点表示与运算：范围、精度和舍入的折中</h2>
+            <span class="badge">2-8 到 2-9</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>怎样用有限 bit 近似表示极大、极小和小数？运算后误差如何处理？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">IEEE 754 表示</div>
+                <ul>
+                    <li>浮点数形式为 (-1)^S x M x 2^e，机器中保存 S、偏置阶码 E、尾数字段。</li>
+                    <li>单精度：1 位符号、8 位阶码、23 位尾数，bias 为 127。</li>
+                    <li>双精度：1 位符号、11 位阶码、52 位尾数，bias 为 1023。</li>
+                    <li>特殊值包括正负零、无穷、NaN 和 denormal numbers。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">浮点运算流程</div>
+                <ul>
+                    <li>加减法先对阶：小阶数的尾数右移，结果阶码取较大者。</li>
+                    <li>乘法：阶码相加再减 bias，尾数相乘，符号位异或。</li>
+                    <li>除法：阶码相减再加 bias，尾数相除，符号位异或。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">精度与异常</div>
+                <ul>
+                    <li>Guard bits 用于减少对阶和运算中的精度损失。</li>
+                    <li>截断方式包括 chopping、Von Neumann rounding 和 rounding。</li>
+                    <li>尾数溢出可通过规格化修正；阶码溢出才是真正范围溢出。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="comparison">
+        <h3>复习时最容易混淆的四组概念</h3>
+        <table>
+            <thead>
+                <tr><th>概念组</th><th>抓手</th><th>常见考法</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>原码 / 反码 / 补码</td><td>负数编码、零的个数、表示范围不同</td><td>给定 bit 串，按不同编码解释十进制值</td></tr>
+                <tr><td>溢出 / carry-out</td><td>补码运算忽略最高位进位，溢出看符号是否合理</td><td>判断 4 位或 8 位补码加减是否溢出</td></tr>
+                <tr><td>串行进位 / 先行进位</td><td>前者等进位传播，后者用 P/G 提前生成进位</td><td>计算 gate delay 或写出 Pi、Gi、ci 公式</td></tr>
+                <tr><td>尾数溢出 / 阶码溢出</td><td>尾数可规格化，阶码超范围才是真溢出</td><td>判断浮点运算结果需右规、左规还是溢出</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">第二章脉络大纲 · 依据 2-1 至 2-9 课件整理</div>
+</div>
+</body>
+</html>

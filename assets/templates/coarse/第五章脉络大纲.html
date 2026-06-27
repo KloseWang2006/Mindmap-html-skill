@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第五章 基本处理单元 - 脉络大纲</title>
+    <style>
+        :root {
+            --bg: #f8f9fb;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --accent: #3b6ff5;
+            --accent-light: #eef3ff;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+            --radius: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 40px 24px 80px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 48px; }
+        .chapter-tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .subtitle { font-size: 15px; color: var(--text-secondary); }
+        .flow-diagram, .overview, .section, .comparison {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .flow-diagram { padding: 32px 28px; margin-bottom: 40px; text-align: center; }
+        .flow-diagram h3 { font-size: 15px; font-weight: 700; margin-bottom: 24px; color: var(--text-secondary); }
+        .flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .flow-box { display: inline-block; padding: 10px 18px; border-radius: 8px; font-size: 13px; font-weight: 700; min-width: 135px; }
+        .flow-box small { display: block; font-size: 11px; font-weight: 400; margin-top: 2px; }
+        .flow-connector { font-size: 13px; color: #9ca3af; padding: 0 7px; white-space: nowrap; }
+        .flow-box.cpu { background: #f3f4f6; color: #6b7280; }
+        .flow-box.steps { background: #fffbeb; color: #d97706; }
+        .flow-box.data { background: #f5f3ff; color: #7c3aed; }
+        .flow-box.ctrl { background: #eef2ff; color: #4f46e5; }
+        .flow-box.impl { background: #ecfdf5; color: #059669; }
+        .overview { padding: 28px 32px; margin-bottom: 40px; display: flex; flex-wrap: wrap; gap: 22px; align-items: center; justify-content: center; }
+        .flow-item { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+        .flow-arrow { color: #c0c8d4; font-size: 20px; font-weight: 300; }
+        .flow-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .section { margin-bottom: 24px; overflow: hidden; transition: box-shadow .2s; }
+        .section:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .section-header { display: flex; align-items: center; gap: 14px; padding: 22px 28px; border-bottom: 1px solid var(--border); }
+        .num {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-header h2 { font-size: 18px; font-weight: 700; flex: 1; }
+        .badge { font-size: 11px; font-weight: 600; letter-spacing: .04em; padding: 4px 10px; border-radius: 14px; white-space: nowrap; }
+        .section-body { padding: 24px 28px 28px; }
+        .core-question {
+            background: #fefce8;
+            border-left: 3px solid #eab308;
+            padding: 10px 16px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+        }
+        .core-question span { font-weight: 400; color: #a16207; }
+        .subsection { margin-bottom: 16px; }
+        .subsection:last-child { margin-bottom: 0; }
+        .subsection-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .subsection-title::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        ul { list-style: none; padding-left: 18px; }
+        li { font-size: 14px; color: var(--text-secondary); position: relative; padding: 2px 0 2px 14px; }
+        li::before { content: '-'; position: absolute; left: 0; color: #cbd5e1; }
+        li em { font-style: normal; font-weight: 600; color: #4b5563; }
+        .s1 .num, .s1 .subsection-title::before { background: #6b7280; }
+        .s1 .badge { color: #6b7280; background: #f3f4f6; }
+        .s2 .num, .s2 .subsection-title::before { background: #d97706; }
+        .s2 .badge { color: #d97706; background: #fffbeb; }
+        .s3 .num, .s3 .subsection-title::before { background: #7c3aed; }
+        .s3 .badge { color: #7c3aed; background: #f5f3ff; }
+        .s4 .num, .s4 .subsection-title::before { background: #4f46e5; }
+        .s4 .badge { color: #4f46e5; background: #eef2ff; }
+        .s5 .num, .s5 .subsection-title::before { background: #059669; }
+        .s5 .badge { color: #059669; background: #ecfdf5; }
+        .comparison { padding: 28px; margin-top: 40px; }
+        .comparison h3 { font-size: 17px; font-weight: 700; margin-bottom: 18px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #f1f5f9; font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); }
+        td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        td:first-child { font-weight: 600; color: var(--text); }
+        code { background: #f1f2f6; color: #eb4d4b; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; }
+        .footer { text-align: center; margin-top: 48px; font-size: 13px; color: #c0c8d4; }
+        @media (max-width: 640px) {
+            body { padding: 24px 12px 60px; }
+            .header h1 { font-size: 24px; }
+            .section-header { padding: 16px 18px; }
+            .section-body { padding: 18px 18px 22px; }
+            .overview { padding: 20px; }
+            .flow-row { flex-direction: column; gap: 4px; }
+            .flow-connector { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="chapter-tag">计算机组成原理 · 第五章</div>
+        <h1>基本处理单元</h1>
+        <p class="subtitle">Basic Processing Unit - 从五步指令执行到数据通路、控制信号和控制器实现</p>
+    </div>
+
+    <div class="flow-diagram">
+        <h3>核心演进逻辑：第四章定义“指令是什么”，第五章解释“CPU 怎样执行它”</h3>
+        <div class="flow-row">
+            <div class="flow-box cpu">CPU 基本概念<br><small>Fetch、decode、execute</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box steps">五步执行模型<br><small>统一指令节奏</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box data">五级数据通路<br><small>寄存器、ALU、Memory</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box ctrl">控制信号<br><small>让数据走对路</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box impl">控制器实现<br><small>硬布线 vs 微程序</small></div>
+        </div>
+    </div>
+
+    <div class="overview">
+        <div class="flow-item"><span class="flow-dot" style="background:#6b7280;"></span>CPU</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#d97706;"></span>5 Steps</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#7c3aed;"></span>Datapath</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#4f46e5;"></span>Control Signals</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#059669;"></span>Control Unit</div>
+    </div>
+
+    <div class="section s1">
+        <div class="section-header">
+            <div class="num">1</div>
+            <h2>CPU 基本闭环：取指、译码、执行</h2>
+            <span class="badge">Concepts</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>处理器如何从内存取出指令，并把 ISA 中的语义变成硬件动作？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">Processing Unit 的职责</div>
+                <ul>
+                    <li>Processing Unit 即 CPU / Instruction Set Processor。</li>
+                    <li>它负责从内存读取程序指令，解释指令，并执行指令指定的动作。</li>
+                    <li>最小闭环是 <code>IR &larr; [[PC]]</code> 与 <code>PC &larr; [PC]+4</code>。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">为什么引入多级处理</div>
+                <ul>
+                    <li>复杂操作可拆成多个 stage，每个 stage 在一个 clock cycle 内完成子任务。</li>
+                    <li>多级结构让连续指令能重叠执行，是 pipeline 的基础。</li>
+                    <li>流水线最希望各类指令经过相同数量的步骤，以保持节奏整齐。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s2">
+        <div class="section-header">
+            <div class="num">2</div>
+            <h2>五步执行模型：把不同指令塞进同一硬件节奏</h2>
+            <span class="badge">5 Steps</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>Load、Add、Store 行为不同，为什么还能共用五阶段框架？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">统一五步</div>
+                <ul>
+                    <li>1. Fetch instruction and increment PC。</li>
+                    <li>2. Decode instruction and read register operands。</li>
+                    <li>3. Execute / compute in ALU。</li>
+                    <li>4. Access memory if needed。</li>
+                    <li>5. Write result back if needed。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">典型指令如何套入</div>
+                <ul>
+                    <li><em>Load R5, X(R7)</em>：第 3 步算 EA，第 4 步读内存，第 5 步写 R5。</li>
+                    <li><em>Add R3, R4, R5</em>：第 3 步 ALU 运算，第 4 步 no action，第 5 步写 R3。</li>
+                    <li><em>Store R6, X(R8)</em>：第 3 步算 EA，第 4 步写内存，第 5 步 no action。</li>
+                    <li>Branch 和 Call 通过第 3 步修改 PC 或保存返回地址。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s3">
+        <div class="section-header">
+            <div class="num">3</div>
+            <h2>五级数据通路：数据在寄存器、ALU、Memory 间流动</h2>
+            <span class="badge">Datapath</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>为了支持五步执行，硬件需要哪些部件和中间寄存器？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">五级硬件组织</div>
+                <ul>
+                    <li>Stage 1：instruction fetch，把指令取入 IR。</li>
+                    <li>Stage 2：decode + register read，把源寄存器读入 RA/RB。</li>
+                    <li>Stage 3：ALU 计算，结果进入 RZ。</li>
+                    <li>Stage 4：memory access，访存数据或写入数据通过 RY/RM 等路径传递。</li>
+                    <li>Stage 5：write back，把最终结果写回 register file。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">关键部件</div>
+                <ul>
+                    <li><em>Register file</em>：需要两个读端口，同时读取两个源寄存器。</li>
+                    <li><em>ALU</em>：执行算术、逻辑、地址计算和比较。</li>
+                    <li><em>Multiplexers</em>：选择 ALU 输入、内存地址来源、写回结果来源。</li>
+                    <li><em>Inter-stage registers</em>：在阶段之间保存数据，保证下一周期继续处理。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s4">
+        <div class="section-header">
+            <div class="num">4</div>
+            <h2>控制信号：决定数据通路每一拍做什么</h2>
+            <span class="badge">Control</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>同一套硬件如何在不同指令、不同阶段执行不同动作？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">控制信号的作用</div>
+                <ul>
+                    <li>控制 multiplexer 选择，让数据走向正确部件。</li>
+                    <li>设置 ALU function，决定执行加、减、比较或逻辑操作。</li>
+                    <li>决定 PC、IR、register file、memory 等何时写入。</li>
+                    <li>控制 memory read/write，并在访存慢时等待 MFC。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">Wait for MFC</div>
+                <ul>
+                    <li>Cache hit 时访存可能一个周期完成。</li>
+                    <li>Cache miss 需要主存返回，Read/Write 步骤可能延长多个 clock cycles。</li>
+                    <li>取指阶段和 Load/Store 的访存阶段都可能需要 Wait for MFC。</li>
+                    <li>PC 在扩展取指周期中只能递增一次，通常等 MFC 到来后再更新。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s5">
+        <div class="section-header">
+            <div class="num">5</div>
+            <h2>控制器实现：硬布线速度快，微程序灵活</h2>
+            <span class="badge">Implementation</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>控制信号是由固定逻辑生成，还是由“控制存储器里的程序”生成？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">Hardwired Control</div>
+                <ul>
+                    <li>由组合逻辑根据 step counter、IR、ALU result、MFC、interrupt requests 等生成控制信号。</li>
+                    <li>Step counter 输出 T1 到 T5，表示当前处于五步中的哪一步。</li>
+                    <li>优点是速度快；缺点是成本高、修改和扩展不灵活。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">Microprogramming</div>
+                <ul>
+                    <li>把每个时钟周期需要的控制信号值存入 microinstruction / control word。</li>
+                    <li>一条机器指令由一段 microprogram / microroutine 实现。</li>
+                    <li>所有微程序存放在 control store 中。</li>
+                    <li>优点是灵活，适合复杂 CISC 指令；缺点是读取和执行微指令会带来额外延迟。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="comparison">
+        <h3>第五章高频对照</h3>
+        <table>
+            <thead>
+                <tr><th>主题</th><th>一句话抓手</th><th>典型考点</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>五步执行</td><td>不同指令统一到相同 stage，必要时 no action</td><td>写出 Load/Add/Store/Branch/Call 的步骤</td></tr>
+                <tr><td>数据通路</td><td>寄存器堆读源，ALU 计算，Memory 访存，最后写回</td><td>RA/RB/RZ/RY/RM 与 Mux 选择</td></tr>
+                <tr><td>Wait for MFC</td><td>访存步骤未完成时 step counter 不能盲目前进</td><td>取指和 Load/Store 第 4 步如何等待</td></tr>
+                <tr><td>Hardwired</td><td>用固定逻辑直接生成控制信号，快但不灵活</td><td>控制信号依赖 Tn、IR、ALU result、MFC 等</td></tr>
+                <tr><td>Microprogramming</td><td>用微指令序列生成控制信号，灵活但慢</td><td>microinstruction、microprogram、control store</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">第五章脉络大纲 · 依据 Basic Processing Unit 课件与现有全量解析大纲整理</div>
+</div>
+</body>
+</html>

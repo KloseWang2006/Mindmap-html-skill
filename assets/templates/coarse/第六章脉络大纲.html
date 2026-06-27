@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第六章 基本输入/输出 — 脉络大纲</title>
+    <style>
+        :root {
+            --bg: #f8f9fb;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --accent: #3b6ff5;
+            --accent-light: #eef3ff;
+            --border: #e2e8f0;
+            --tag-polling: #f59e0b;
+            --tag-interrupt: #8b5cf6;
+            --tag-dma: #10b981;
+            --tag-base: #6b7280;
+            --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+            --radius: 10px;
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Hiragino Sans GB", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 40px 24px 80px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        /* ───── Header ───── */
+        .header {
+            text-align: center;
+            margin-bottom: 48px;
+        }
+        .header .chapter-tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            letter-spacing: -.01em;
+            margin-bottom: 8px;
+        }
+        .header .subtitle {
+            font-size: 15px;
+            color: var(--text-secondary);
+        }
+
+        /* ───── Overview card ───── */
+        .overview {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px 36px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 24px;
+            align-items: center;
+            justify-content: center;
+        }
+        .overview .flow-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 15px;
+            font-weight: 600;
+        }
+        .overview .flow-arrow {
+            color: #c0c8d4;
+            font-size: 20px;
+            font-weight: 300;
+        }
+        .flow-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            display: inline-block;
+        }
+
+        /* ───── Section card ───── */
+        .section {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            margin-bottom: 24px;
+            overflow: hidden;
+            transition: box-shadow .2s;
+        }
+        .section:hover {
+            box-shadow: 0 4px 12px rgba(0,0,0,.08);
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+            padding: 22px 28px;
+            border-bottom: 1px solid var(--border);
+            cursor: default;
+        }
+        .section-header .num {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-header h2 {
+            font-size: 18px;
+            font-weight: 700;
+            flex: 1;
+        }
+        .section-header .badge {
+            font-size: 11px;
+            font-weight: 600;
+            letter-spacing: .04em;
+            padding: 4px 10px;
+            border-radius: 14px;
+            white-space: nowrap;
+        }
+
+        .section-body {
+            padding: 24px 28px 28px 28px;
+        }
+        .section-body .core-question {
+            background: #fefce8;
+            border-left: 3px solid #eab308;
+            padding: 10px 16px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+        }
+        .section-body .core-question span {
+            font-weight: 400;
+            color: #a16207;
+        }
+
+        .subsection {
+            margin-bottom: 16px;
+        }
+        .subsection:last-child { margin-bottom: 0; }
+        .subsection-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .subsection-title::before {
+            content: '';
+            width: 5px;
+            height: 5px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+        .subsection ul {
+            list-style: none;
+            padding-left: 18px;
+        }
+        .subsection li {
+            font-size: 14px;
+            color: var(--text-secondary);
+            position: relative;
+            padding: 2px 0 2px 14px;
+        }
+        .subsection li::before {
+            content: '—';
+            position: absolute;
+            left: 0;
+            color: #cbd5e1;
+        }
+        .subsection li em {
+            font-style: normal;
+            font-weight: 600;
+            color: #4b5563;
+        }
+
+        /* ───── Comparison Table ───── */
+        .comparison {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 28px;
+            margin-top: 40px;
+        }
+        .comparison h3 {
+            font-size: 17px;
+            font-weight: 700;
+            margin-bottom: 18px;
+            text-align: center;
+        }
+        .comparison table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+        .comparison th {
+            background: #f1f5f9;
+            font-weight: 700;
+            padding: 10px 14px;
+            text-align: left;
+            border-bottom: 2px solid var(--border);
+        }
+        .comparison td {
+            padding: 10px 14px;
+            border-bottom: 1px solid var(--border);
+            color: var(--text-secondary);
+        }
+        .comparison tr:last-child td { border-bottom: none; }
+        .comparison td:first-child { font-weight: 600; color: var(--text); }
+
+        /* ───── Color themes per section ───── */
+        .s1 .num { background: #6b7280; }
+        .s1 .subsection-title::before { background: #6b7280; }
+        .s1 .badge { color: #6b7280; background: #f3f4f6; }
+
+        .s2 .num { background: #f59e0b; }
+        .s2 .subsection-title::before { background: #f59e0b; }
+        .s2 .badge { color: #d97706; background: #fffbeb; }
+
+        .s3 .num { background: #8b5cf6; }
+        .s3 .subsection-title::before { background: #8b5cf6; }
+        .s3 .badge { color: #7c3aed; background: #f5f3ff; }
+
+        .s4 .num { background: #6366f1; }
+        .s4 .subsection-title::before { background: #6366f1; }
+        .s4 .badge { color: #4f46e5; background: #eef2ff; }
+
+        .s5 .num { background: #10b981; }
+        .s5 .subsection-title::before { background: #10b981; }
+        .s5 .badge { color: #059669; background: #ecfdf5; }
+
+        /* ───── Flow diagram ───── */
+        .flow-diagram {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+            padding: 32px 28px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+        .flow-diagram h3 {
+            font-size: 15px;
+            font-weight: 700;
+            margin-bottom: 24px;
+            color: var(--text-secondary);
+        }
+        .flow-row {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0;
+            margin-bottom: 12px;
+        }
+        .flow-box {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            text-align: center;
+            min-width: 140px;
+        }
+        .flow-box.base { background: #f3f4f6; color: #6b7280; }
+        .flow-box.polling { background: #fffbeb; color: #d97706; }
+        .flow-box.interrupt { background: #f5f3ff; color: #7c3aed; }
+        .flow-box.dma { background: #ecfdf5; color: #059669; }
+        .flow-connector {
+            font-size: 13px;
+            color: #9ca3af;
+            padding: 0 6px;
+            white-space: nowrap;
+        }
+        .flow-problem {
+            font-size: 12px;
+            color: #ef4444;
+            font-weight: 500;
+            margin-top: 4px;
+        }
+
+        /* ───── Footer ───── */
+        .footer {
+            text-align: center;
+            margin-top: 48px;
+            font-size: 13px;
+            color: #c0c8d4;
+        }
+
+        /* ───── Responsive ───── */
+        @media (max-width: 640px) {
+            body { padding: 24px 12px 60px; }
+            .header h1 { font-size: 24px; }
+            .section-header { padding: 16px 18px; }
+            .section-body { padding: 18px 18px 22px 18px; }
+            .overview { padding: 20px; }
+            .flow-row { flex-direction: column; gap: 4px; }
+            .flow-connector { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+
+    <!-- ═══════════ HEADER ═══════════ -->
+    <div class="header">
+        <div class="chapter-tag">计算机组成原理 · 第六章</div>
+        <h1>基本输入/输出</h1>
+        <p class="subtitle">Basic Input/Output — 从轮询到中断再到DMA，CPU与I/O设备通信的演进之路</p>
+    </div>
+
+    <!-- ═══════════ 演进流程图 ═══════════ -->
+    <div class="flow-diagram">
+        <h3>📌 核心演进逻辑：每一种新方式都解决了前一种的瓶颈</h3>
+        <div class="flow-row">
+            <div class="flow-box base">6-1<br>I/O 接口<br><span style="font-weight:400;font-size:11px;">基础访问机制</span></div>
+            <span class="flow-connector">→</span>
+            <div class="flow-box polling">6-2<br>程序控制 I/O<br><span style="font-weight:400;font-size:11px;">轮询等待</span></div>
+            <span class="flow-connector">→</span>
+            <div class="flow-box interrupt">6-3 → 6-4<br>中断驱动 I/O<br><span style="font-weight:400;font-size:11px;">设备主动通知</span></div>
+            <span class="flow-connector">→</span>
+            <div class="flow-box dma">6-5<br>DMA<br><span style="font-weight:400;font-size:11px;">块传输·CPU解放</span></div>
+        </div>
+        <div style="display:flex;justify-content:center;gap:80px;flex-wrap:wrap;margin-top:10px;">
+            <span class="flow-problem" style="font-size:12px;">瓶颈：CPU 空转</span>
+            <span class="flow-problem" style="font-size:12px;">瓶颈：CPU 介入每字节</span>
+            <span class="flow-problem" style="font-size:12px;">瓶颈：传输速率受限</span>
+        </div>
+    </div>
+
+    <!-- ═══════════ OVERVIEW ═══════════ -->
+    <div class="overview">
+        <div class="flow-item"><span class="flow-dot" style="background:#6b7280;"></span>&nbsp; I/O接口</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#f59e0b;"></span>&nbsp; 程序控制I/O</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#8b5cf6;"></span>&nbsp; 中断概念与处理</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#6366f1;"></span>&nbsp; 多设备中断</div>
+        <span class="flow-arrow">→</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#10b981;"></span>&nbsp; DMA</div>
+    </div>
+
+    <!-- ═══════════ SECTION 6-1 ═══════════ -->
+    <div class="section s1">
+        <div class="section-header">
+            <div class="num">1</div>
+            <h2>6-1 I/O 接口</h2>
+            <span class="badge">基础</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">🔑 核心问题：<span>CPU 如何"看到"并"访问"I/O 设备？</span></div>
+
+            <div class="subsection">
+                <div class="subsection-title">访问 I/O 设备的两种方式</div>
+                <ul>
+                    <li><em>Memory-Mapped I/O（内存映射）</em> — I/O 与内存共享同一地址空间，用 Load/Store 访问</li>
+                    <li>✅ 任何访存指令都能操作 I/O &nbsp; ❌ 占用内存地址空间</li>
+                    <li><em>Isolated I/O（独立编址）</em> — I/O 与内存地址空间分离，专用指令（IN/OUT）</li>
+                    <li>✅ I/O 设备仅需少量地址线 &nbsp; ❌ 需要额外指令</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">I/O 设备接口</div>
+                <ul>
+                    <li>位于设备与互连网络之间的电路，提供数据传输与状态/控制信息交换</li>
+                    <li>包含三类寄存器：<em>数据寄存器</em>（Data）、<em>状态寄存器</em>（Status）、<em>控制寄存器</em>（Control）</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ SECTION 6-2 ═══════════ -->
+    <div class="section s2">
+        <div class="section-header">
+            <div class="num">2</div>
+            <h2>6-2 程序控制 I/O（Polling）</h2>
+            <span class="badge">轮询方式</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">🔑 核心问题：<span>最简单的 I/O 方式如何工作？代价是什么？</span></div>
+
+            <div class="subsection">
+                <div class="subsection-title">基本原理</div>
+                <ul>
+                    <li>CPU 在循环中反复查询设备状态寄存器中的 <em>Ready 标志位</em></li>
+                    <li>设备通过状态标志（如键盘 KIN、显示器 DOUT）表示"数据已就绪"</li>
+                    <li>CPU 检测到 Ready=1 后才执行数据读写</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">等待循环实现</div>
+                <ul>
+                    <li>键盘读取：轮询 <em>KBD_STATUS</em>，检查 KIN 标志，然后读 <em>KBD_DATA</em></li>
+                    <li>显示器输出：轮询 <em>DISP_STATUS</em>，检查 DOUT 标志，然后写 <em>DISP_DATA</em></li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">优缺点</div>
+                <ul>
+                    <li>✅ 硬件最简单，易于理解和实现</li>
+                    <li>❌ CPU 大量时间浪费在"忙等"（busy waiting），无法执行有用计算</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ SECTION 6-3 ═══════════ -->
+    <div class="section s3">
+        <div class="section-header">
+            <div class="num">3</div>
+            <h2>6-3 中断概念与处理</h2>
+            <span class="badge">中断机制</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">🔑 核心问题：<span>如何让 CPU 不再空等，由设备主动通知？</span></div>
+
+            <div class="subsection">
+                <div class="subsection-title">中断定义</div>
+                <ul>
+                    <li><em>中断</em>：导致 CPU 暂停当前程序执行、转而执行中断服务程序（ISR）的事件</li>
+                    <li>典型场景：定时器每 10 秒中断一次，CPU 暂停 COMPUTE 例程去执行 DISPLAY 例程</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">核心概念</div>
+                <ul>
+                    <li><em>中断请求（Interrupt Request）</em> — I/O 设备通过总线控制线向 CPU 发送的信号</li>
+                    <li><em>中断应答（Interrupt Acknowledge）</em> — CPU 发出的确认信号</li>
+                    <li><em>中断服务程序（ISR）</em> — 响应中断而执行的例程</li>
+                    <li><em>中断延迟（Interrupt Latency）</em> — 从收到中断请求到开始执行 ISR 之间的时间</li>
+                    <li><em>ISR vs 普通子程序</em> — ISR 与被中断程序无关联，必须先保存现场（PC、PSW、寄存器），完成后恢复</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">中断处理流程</div>
+                <ul>
+                    <li>接收中断请求 → 保存现场（PC、PSW）→ 执行 ISR → 恢复现场 → 返回被中断程序</li>
+                    <li>大多数现代处理器只自动保存最小上下文（PC + PSW），其余由软件保存</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">中断的使能与禁止（两级控制）</div>
+                <ul>
+                    <li><em>处理器端</em>：PSR 中的 IE（Interrupt Enable）位，IE=0 时忽略所有中断</li>
+                    <li><em>设备端</em>：设备接口控制寄存器中的中断使能位，控制单个设备能否发中断</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ SECTION 6-4 ═══════════ -->
+    <div class="section s4">
+        <div class="section-header">
+            <div class="num">4</div>
+            <h2>6-4 多设备中断系统设计</h2>
+            <span class="badge">系统设计</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">🔑 核心问题：<span>多个设备都要中断 CPU 时，如何识别、嵌套、仲裁？</span></div>
+
+            <div class="subsection">
+                <div class="subsection-title">问题一：识别中断源</div>
+                <ul>
+                    <li><em>多中断请求线</em> — 每个设备/每组设备独立的中断线</li>
+                    <li><em>非向量中断（软件轮询）</em> — CPU 跳到固定地址，逐一查询各设备状态寄存器</li>
+                    <li><em>向量中断（Vectored Interrupt）</em> — 设备主动发送中断向量码，通过中断向量表找到对应 ISR 地址</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">问题二：中断嵌套（Multi-level Interrupt）</div>
+                <ul>
+                    <li>为设备和处理器分配优先级，高优先级设备可中断低优先级 ISR</li>
+                    <li>处理器优先级编码在 PSW 中，只接受比自身优先级高的中断</li>
+                    <li>进入 ISR 时将处理器优先级提升至该设备优先级</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">问题三：同时中断的仲裁</div>
+                <ul>
+                    <li><em>独立中断线</em> — 硬件优先级仲裁电路，选择最高优先级</li>
+                    <li><em>软件轮询</em> — 按轮询顺序决定优先级</li>
+                    <li><em>菊花链（Daisy Chain）</em> — 离 CPU 电气距离越近的设备优先级越高</li>
+                    <li><em>优先级分组</em> — 将设备分配到不同优先级级别，每组内再用菊花链或轮询</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ SECTION 6-5 ═══════════ -->
+    <div class="section s5">
+        <div class="section-header">
+            <div class="num">5</div>
+            <h2>6-5 直接存储器访问（DMA）</h2>
+            <span class="badge">高速传输</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">🔑 核心问题：<span>高速大块数据如何彻底绕开 CPU 直接传输？</span></div>
+
+            <div class="subsection">
+                <div class="subsection-title">DMA 的动机</div>
+                <ul>
+                    <li>程序控制 I/O 和中断驱动 I/O 都要求 <em>CPU 介入每一个字节的传输</em></li>
+                    <li>传输速率受限，CPU 被绑定在 I/O 管理上</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">DMA 工作原理</div>
+                <ul>
+                    <li><em>DMA 控制器（DMAC）</em> 接管系统总线，直接在 I/O 设备与主存之间传输数据块</li>
+                    <li><em>三步流程</em>：① CPU 准备（告知设备地址、内存地址、块大小、方向、模式）→ ② DMAC 控制数据传送（CPU 继续其他工作）→ ③ DMAC 发出中断通知完成</li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">DMA 控制器功能</div>
+                <ul>
+                    <li>提供内存地址、递增地址、计数已传字节、产生所有总线控制信号</li>
+                    <li>内部寄存器：<em>起始地址、字计数、状态/控制寄存器</em></li>
+                </ul>
+            </div>
+
+            <div class="subsection">
+                <div class="subsection-title">三种传输模式</div>
+                <ul>
+                    <li><em>Burst（突发）模式</em> — 一次性传输整个块。✅ 适合加载程序/文件 &nbsp; ❌ CPU 长时间挂起</li>
+                    <li><em>Cycle Stealing（周期窃取）</em> — 每次只传一个字节就归还总线，反复请求。✅ CPU 使用率更高</li>
+                    <li><em>Transparent（透明）模式</em> — 仅在 CPU 不使用总线时传输。✅ CPU 完全无感 &nbsp; ❌ 硬件复杂</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════════ 对比总结表 ═══════════ -->
+    <div class="comparison">
+        <h3>📊 三种 I/O 通信方式对比</h3>
+        <table>
+            <thead>
+                <tr>
+                    <th>维度</th>
+                    <th>程序控制 I/O (Polling)</th>
+                    <th>中断驱动 I/O (Interrupt)</th>
+                    <th>DMA</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>CPU 角色</td>
+                    <td>全程轮询等待设备就绪</td>
+                    <td>设备通知，CPU 介入每字节传输</td>
+                    <td>仅准备与收尾，传输过程不参与</td>
+                </tr>
+                <tr>
+                    <td>CPU 效率</td>
+                    <td>低（空转忙等）</td>
+                    <td>中（可做其他工作）</td>
+                    <td>高（完全解放）</td>
+                </tr>
+                <tr>
+                    <td>数据传输单位</td>
+                    <td>字/字节</td>
+                    <td>字/字节</td>
+                    <td>块（block）</td>
+                </tr>
+                <tr>
+                    <td>适用场景</td>
+                    <td>简单嵌入式系统</td>
+                    <td>低速字符设备（键盘、鼠标）</td>
+                    <td>高速块设备（磁盘、网卡、显卡）</td>
+                </tr>
+                <tr>
+                    <td>硬件复杂度</td>
+                    <td>最低</td>
+                    <td>中等</td>
+                    <td>最高（需 DMA 控制器）</td>
+                </tr>
+                <tr>
+                    <td>启动方式</td>
+                    <td>CPU 主动轮询</td>
+                    <td>设备主动发中断请求</td>
+                    <td>CPU 初始化 DMAC 后由 DMAC 控制</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <!-- ═══════════ FOOTER ═══════════ -->
+    <div class="footer">
+        课程：计算机组成与嵌入式系统 · 教师：Wang Guohua · ghwang@scut.edu.cn
+    </div>
+
+</div>
+
+</body>
+</html>

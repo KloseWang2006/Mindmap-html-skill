@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>第三章：The Memory System - 全量解析大纲</title>
+    <style>
+        body {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.65;
+            padding: 30px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 45px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #0f2c59;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 16px;
+            font-size: 2.4em;
+        }
+        .subtitle { text-align: center; color: #5d6d7e; margin: 0 0 34px; font-size: 1.02em; }
+        .section-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 1.35em;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .page-badge {
+            background-color: #e67e22;
+            color: white;
+            padding: 2px 6px;
+            font-size: 0.75em;
+            border-radius: 4px;
+            float: right;
+            font-weight: normal;
+        }
+        .tree-level-1 { margin-left: 20px; border-left: 3px solid #3498db; padding-left: 20px; margin-bottom: 18px; }
+        .tree-level-2 { margin-left: 25px; border-left: 2px solid #bdc3c7; padding-left: 15px; margin-bottom: 10px; }
+        .tree-level-3 { margin-left: 25px; border-left: 2px dashed #dcdde1; padding-left: 15px; color: #57606f; margin-top: 8px; }
+        .node-title { font-weight: bold; color: #2c3e50; font-size: 1.1em; margin-bottom: 5px; }
+        .math-block {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2ecc71;
+            padding: 14px 20px;
+            margin: 10px 0;
+            font-family: "Consolas", "Cambria", "Times New Roman", serif;
+            font-size: 1.05em;
+            color: #111;
+            border-radius: 0 6px 6px 0;
+            overflow-x: auto;
+        }
+        .ai-insight {
+            background-color: #f0f7ff;
+            border-left: 4px solid #00a8ff;
+            padding: 10px 18px;
+            margin: 8px 0;
+            font-size: 0.95em;
+            color: #2f3542;
+            border-radius: 0 6px 6px 0;
+        }
+        .exam-warning {
+            background-color: #fff5f5;
+            border-left: 4px solid #ff4757;
+            padding: 10px 18px;
+            margin: 8px 0;
+            font-size: 0.95em;
+            color: #2f3542;
+            border-radius: 0 6px 6px 0;
+        }
+        .badge { display: inline-block; padding: 2px 6px; font-size: 0.78em; font-weight: bold; border-radius: 4px; color: white; margin-right: 6px; }
+        .badge-def { background-color: #2ed573; }
+        .badge-prop { background-color: #ffa502; }
+        .badge-compare { background-color: #6c5ce7; }
+        code { background-color: #f1f2f6; color: #eb4d4b; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; font-size: 0.92em; }
+        @media (max-width: 720px) {
+            body { padding: 14px; }
+            .container { padding: 22px 18px; }
+            h1 { font-size: 1.8em; }
+            .section-header { font-size: 1.12em; }
+            .tree-level-1, .tree-level-2, .tree-level-3 { margin-left: 10px; }
+            .page-badge { float: none; display: inline-block; margin-left: 8px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Chapter 8: The Memory System</h1>
+    <p class="subtitle">依据第三章 3-1 至 3-8 课件整理的静态思维导图，覆盖主存基础、SRAM/DRAM、存储扩展、层次结构、Cache、虚拟内存与磁盘。</p>
+
+    <div class="section-header">1. 存储系统基本概念 (Basic Concepts of Memory Systems)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-1 Page 5</span><span class="badge badge-compare">1.1 Internal Memory 与 External Memory</span></div>
+        <div>计算机系统配备层次化存储子系统。Internal memory 位于系统内部、可被处理器直接访问；external memory 通常通过 I/O 系统间接访问。</div>
+        <div class="ai-insight"><strong>全章主线：</strong> 越靠近 CPU，速度越快、容量越小、单位成本越高；越远离 CPU，容量越大、速度越慢、单位成本越低。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-1 Page 6 - 9</span><span class="badge badge-def">1.2 Memory Locations and Addresses</span></div>
+        <div>主存由大量 bit cell 构成，但通常以固定大小的 word 或 byte 为基本访问单位。</div>
+        <div class="tree-level-2">
+            <b>Address Space：</b> k 位地址通常表示从 0 到 <code>2^k - 1</code> 的连续地址。
+        </div>
+        <div class="tree-level-2">
+            <b>Byte-addressable Memory：</b> 连续地址对应连续字节，不为每个 bit 分配独立地址。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-1 Page 10 - 11</span><span class="badge badge-def">1.3 Byte Ordering</span></div>
+        <div class="tree-level-2"><b>Big-endian：</b>低地址保存更高有效字节。</div>
+        <div class="tree-level-2"><b>Little-endian：</b>低地址保存更低有效字节。</div>
+        <div class="exam-warning">典型题：32 位值 <code>0x30A79847</code> 存入地址 <code>0x1000</code>，判断某地址处字节值。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-1 Page 12 - 15</span><span class="badge badge-prop">1.4 Main Memory Operations</span></div>
+        <div class="tree-level-2">
+            <b>Read/Load：</b> 处理器把地址送入 MAR，将 R/W 置 1，内存把数据送到 MDR。
+        </div>
+        <div class="tree-level-2">
+            <b>Write/Store：</b> 处理器把地址送入 MAR、数据送入 MDR，将 R/W 置 0，写入指定位置。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-1 Page 16 - 28</span><span class="badge badge-compare">1.5 存储器特性</span></div>
+        <div class="tree-level-2">
+            <b>Physical types：</b> semiconductor、magnetic surface、optical。
+        </div>
+        <div class="tree-level-2">
+            <b>Capacity：</b> word size 与 number of words 共同决定容量。
+        </div>
+        <div class="tree-level-2">
+            <b>Access methods：</b> sequential、random、direct、associative。
+        </div>
+        <div class="tree-level-2">
+            <b>Performance：</b> access time、cycle time、transfer rate。
+        </div>
+        <div class="math-block">cycle time = access time + recovery/additional time before next access</div>
+    </div>
+
+    <div class="section-header">2. 半导体 SRAM (Semiconductor Static RAM)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-2 Page 3 - 9</span><span class="badge badge-def">2.1 SRAM Cell</span></div>
+        <div>SRAM 用传统 flip-flop / latch 逻辑保存二进制值，word line 未选中时保持状态。</div>
+        <div class="tree-level-2">
+            <b>Read：</b> 选中 word line，通过 bit lines 和 sense circuitry 读出状态。
+        </div>
+        <div class="tree-level-2">
+            <b>Write：</b> 外部写入电路强制 bit lines 到目标值，改变锁存状态。
+        </div>
+        <div class="exam-warning"><b>优缺点：</b> SRAM fast，但 low density、high cost；因此常用于 Cache。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-2 Page 10 - 15</span><span class="badge badge-prop">2.2 SRAM Chip Organization</span></div>
+        <div>课件用 16 x 8 与 1K x 1 展示 cell array、address decoder、sense/write circuitry 与控制线。</div>
+        <div class="math-block">8K x 16 SRAM -> address lines = 13, data lines = 16</div>
+        <div class="ai-insight">容量题抓住两个量：字数决定地址线，位宽决定数据线。</div>
+    </div>
+
+    <div class="section-header">3. 半导体 DRAM (Semiconductor Dynamic RAM)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-3 Page 3 - 6</span><span class="badge badge-def">3.1 DRAM Cell</span></div>
+        <div>DRAM 用电容 C 上的电荷表示 1 或 0，读操作经 sense amplifier 放大并刷新。</div>
+        <div class="tree-level-2">
+            <b>Read 1：</b> 电荷高于阈值，sense amplifier 驱动 bit line 到 1，并重新充电。
+        </div>
+        <div class="tree-level-2">
+            <b>Read 0：</b> 电荷低于阈值，bit line 被拉低，保持无电荷状态。
+        </div>
+        <div class="exam-warning"><b>优缺点：</b> DRAM high density、low cost，但 longer access time、leaky、needs refresh。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-3 Page 7 - 9</span><span class="badge badge-prop">3.2 DRAM Chip Organization 与 Fast Page Mode</span></div>
+        <div>DRAM 为减少引脚数量，常把行地址与列地址分时复用；选中一行后，sense amplifier 也可作为 latch。</div>
+        <div class="tree-level-2">Fast page mode 利用同一行中连续访问，避免重复选择行。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-3 Page 10 - 17</span><span class="badge badge-prop">3.3 SDRAM 与 DDR</span></div>
+        <div>SDRAM 操作与时钟同步，可通过 mode register 选择 burst operation。</div>
+        <div class="tree-level-2"><b>Latency：</b> 第一个数据返回前等待的时钟周期数。</div>
+        <div class="tree-level-2"><b>Bandwidth：</b> 单位时间可传输的数据量。</div>
+        <div class="tree-level-2"><b>DDR SDRAM：</b> 在时钟上升沿和下降沿都传输数据，长 burst 情况下带宽近似翻倍。</div>
+    </div>
+
+    <div class="section-header">4. 更大存储器结构 (Structure of Larger Memories)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-4 Page 3 - 9</span><span class="badge badge-prop">4.1 静态存储系统扩展</span></div>
+        <div class="tree-level-2">
+            <b>位扩展法：</b> 芯片每个存储单元位数小于目标字长，多个芯片并行提供不同 bit 位。
+        </div>
+        <div class="tree-level-2">
+            <b>字扩展法：</b> 芯片字数不足，用高位地址经译码器选择芯片组。
+        </div>
+        <div class="tree-level-2">
+            <b>字位同时扩展：</b> 字数与位宽都不足，芯片形成二维阵列。
+        </div>
+        <div class="math-block">目标 M x N bit, 芯片 l x k bit<br>total chips = (M/l) x (N/k)</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-4 Page 10 - 14</span><span class="badge badge-compare">4.2 DRAM Modules</span></div>
+        <div>大型 DRAM 系统与静态存储系统组织思想相似，实际封装为插在主板插槽上的 memory module。</div>
+        <div class="tree-level-2"><b>SIMM：</b>较旧的单列直插内存模块。</div>
+        <div class="tree-level-2"><b>DIMM：</b>现代常见封装，可一次提供 64 位数据。</div>
+    </div>
+
+    <div class="section-header">5. 存储层次 (Memory Hierarchy)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-5 Page 3 - 7</span><span class="badge badge-compare">5.1 为什么需要层次结构</span></div>
+        <div>理想存储器要求零延迟、无限容量、零成本，但现实中容量、速度、成本互相冲突。</div>
+        <div class="tree-level-2">层次结构目标：用多个层级制造“fast and large”的错觉。</div>
+        <div class="tree-level-2">典型层次：registers -> L1 cache -> L2 cache -> main memory -> disk。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-5 Page 8 - 13</span><span class="badge badge-def">5.2 Buffer 与 Locality</span></div>
+        <div>上层小而快的存储器作为下层大而慢存储器中部分数据的 buffer。</div>
+        <div class="tree-level-2">
+            <b>Temporal locality：</b> 最近访问过的 item 很可能很快再次被访问。
+        </div>
+        <div class="tree-level-2">
+            <b>Spatial locality：</b> 访问一个 item 后，附近 item 可能很快被访问。
+        </div>
+        <div class="ai-insight">Cache 和虚拟内存都依赖局部性，只是块大小和 miss 代价不同。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-5 Page 14</span><span class="badge badge-prop">5.3 存储层次设计四问</span></div>
+        <div class="tree-level-2">Q1: Where can a block be placed? - block placement</div>
+        <div class="tree-level-2">Q2: How is a block found? - block identification</div>
+        <div class="tree-level-2">Q3: Which block should be replaced on a miss? - replacement</div>
+        <div class="tree-level-2">Q4: What happens on a write? - write strategy</div>
+    </div>
+
+    <div class="section-header">6. Cache Memories</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-6 Page 3 - 10</span><span class="badge badge-def">6.1 Cache 的目的、组织、Hit/Miss</span></div>
+        <div>Cache 是由 SRAM 构成的小而快的硬件管理缓冲区，位于 CPU 和主存之间，保存主存中频繁访问的 blocks。</div>
+        <div class="tree-level-2">
+            <b>Hit：</b> 请求数据已经在 Cache 中，直接返回。
+        </div>
+        <div class="tree-level-2">
+            <b>Miss：</b> Cache 中没有目标块，需要访问主存并装入包含目标字的 block。
+        </div>
+        <div class="tree-level-2">
+            CPU 不需要显式知道 Cache 存在，Cache control circuitry 自动判断 hit/miss。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-6 Page 11 - 13</span><span class="badge badge-prop">6.2 Cache Design Issues</span></div>
+        <div class="tree-level-2">Mapping scheme：主存块能放到 Cache 哪里？</div>
+        <div class="tree-level-2">Block identification：如何判断目标块是否在 Cache 中？</div>
+        <div class="tree-level-2">Replacement algorithm：miss 时替换哪一块？</div>
+        <div class="tree-level-2">Write policy：写命中和写缺失如何处理？</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-6 Page 14 - 21</span><span class="badge badge-def">6.3 Direct Mapping</span></div>
+        <div>每个主存块只能映射到唯一 Cache line。</div>
+        <div class="math-block">i = j mod m<br>i: cache line number, j: main memory block number, m: cache lines</div>
+        <div class="tree-level-2">
+            <b>地址结构：</b> Tag + Line + Word/Byte offset。
+        </div>
+        <div class="tree-level-2">
+            <b>优点：</b> simple、easy to implement、inexpensive。
+        </div>
+        <div class="tree-level-2">
+            <b>缺点：</b> fixed location for given block，容易发生 conflict miss。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-6 Page 22 - 25</span><span class="badge badge-def">6.4 Fully Associative Mapping</span></div>
+        <div>主存块可装入 Cache 任意 line，因此地址只需 tag 和 word/byte offset。</div>
+        <div class="tree-level-2">
+            <b>优点：</b> 放置自由度最大，冲突最少。
+        </div>
+        <div class="tree-level-2">
+            <b>缺点：</b> 需要同时比较所有 tag，硬件复杂且成本高。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-6 Page 26 - 34</span><span class="badge badge-def">6.5 Set Associative Mapping 与 Valid Bit</span></div>
+        <div>组相联是直接映射和全相联的折中：主存块映射到某个 set，可放入该 set 内任意 line。</div>
+        <div class="math-block">m = v x k<br>i = j mod v<br>address = Tag + Set + Word/Byte offset</div>
+        <div class="tree-level-2">
+            <b>k-way set associative：</b> 每个 set 包含 k 条 line。
+        </div>
+        <div class="tree-level-2">
+            <b>Valid bit：</b> 标记 Cache block 中数据是否有效，刚上电时 Cache 内容无效。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-6 Page 35 - 46</span><span class="badge badge-prop">6.6 Replacement Algorithms 与映射例题</span></div>
+        <div>直接映射 Cache 没有替换选择；全相联和组相联需要替换算法。</div>
+        <div class="tree-level-2"><b>LRU：</b>替换最长时间未访问的块。</div>
+        <div class="tree-level-2"><b>FIFO：</b>替换最早进入的块。</div>
+        <div class="tree-level-2"><b>Random：</b>随机替换，实现简单。</div>
+        <div class="exam-warning">直接映射中使用随机替换没有意义，因为 incoming block 只有一个可放位置。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-6 Page 47 - 50</span><span class="badge badge-prop">6.7 Write Policies</span></div>
+        <div class="tree-level-2">
+            <b>Write Through：</b> 写命中时同时更新 Cache 和主存；一致性简单，但所有写都访问主存。
+        </div>
+        <div class="tree-level-2">
+            <b>Write Back：</b> 只更新 Cache 并设置 dirty/modified bit；替换时再写回主存。
+        </div>
+        <div class="tree-level-2">
+            <b>No-Write Allocate：</b> 写缺失时直接写主存，不把块调入 Cache。
+        </div>
+        <div class="tree-level-2">
+            <b>Write Allocate：</b> 写缺失时把包含目标字的块装入 Cache，再写 Cache。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-6 Page 51 - 56</span><span class="badge badge-prop">6.8 Hit Rate、Average Access Time 与 Multi-level Cache</span></div>
+        <div>命中率是成功在 Cache 中访问的数据次数占所有访问次数的比例。</div>
+        <div class="math-block">H = Nc / (Nc + Nm)<br>tave = H * tc + (1 - H) * tm</div>
+        <div class="tree-level-2">现代系统通常使用多级 Cache：L1 常在 CPU core 内，可能分为 instruction cache 和 data cache；L2/L3 容量更大但更慢。</div>
+    </div>
+
+    <div class="section-header">7. 虚拟内存与分页 (Virtual Memory and Paging)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-7 Page 3 - 12</span><span class="badge badge-compare">7.1 Virtual Memory 的动机与收益</span></div>
+        <div>虚拟内存用磁盘扩展物理内存的表观大小，并让每个程序看到连续、独立的地址空间。</div>
+        <div class="tree-level-2">
+            <b>Before VM：</b> overlaying 需要程序员手工划分程序段，维护成本高。
+        </div>
+        <div class="tree-level-2">
+            <b>Benefits：</b> large address space、simplify relocation、support protection and sharing、ease multiprogramming。
+        </div>
+        <div class="tree-level-2">
+            <b>Implementation：</b> paging、segmentation、segmentation with paging。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-7 Page 13 - 18</span><span class="badge badge-def">7.2 Paging 基本结构与地址转换</span></div>
+        <div>虚拟内存和主存都被划分为固定大小块：虚拟内存中叫 page，主存中叫 page frame。</div>
+        <div class="math-block">Virtual address = Virtual Page Number + Offset<br>Physical address = Page Frame Number + Offset</div>
+        <div class="tree-level-2">
+            <b>Page table：</b> PTE 数组，用虚拟页号索引，得到页框号或磁盘位置。
+        </div>
+        <div class="tree-level-2">
+            <b>PTE 字段：</b> page frame number、valid/presence bit、protection/use/dirty 等控制信息。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-7 Page 19 - 23</span><span class="badge badge-prop">7.3 Page Fault、TLB 与页面替换</span></div>
+        <div class="tree-level-2">
+            <b>Page hit：</b> 访问的虚拟页已在主存。
+        </div>
+        <div class="tree-level-2">
+            <b>Page fault：</b> 虚拟页不在主存，需要 OS 从磁盘调入，代价远高于 Cache miss。
+        </div>
+        <div class="tree-level-2">
+            <b>TLB：</b> Translation Lookaside Buffer，是 page table 的小型高速缓存；TLB hit 可省掉一次内存页表访问。
+        </div>
+        <div class="tree-level-2">
+            <b>Replacement：</b> LRU、FIFO 等策略通常由 OS 软件实现。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-7 Page 24 - 26</span><span class="badge badge-compare">7.4 Page Size 的取舍</span></div>
+        <div class="tree-level-2">
+            <b>大页面优势：</b> 页表更小，TLB 覆盖范围更大，磁盘批量传输效率更高。
+        </div>
+        <div class="tree-level-2">
+            <b>大页面缺点：</b> 内部碎片更严重，可能装入更多不会用到的数据。
+        </div>
+        <div class="exam-warning">Offset 位数由页面大小决定；例如 2MB page 需要 21 位 offset。</div>
+    </div>
+
+    <div class="section-header">8. 辅助存储 (Secondary Storage)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-8 Page 3 - 8</span><span class="badge badge-def">8.1 磁盘机械结构</span></div>
+        <div>磁盘由一个或多个盘片安装在共同 spindle 上，盘片以恒定速度旋转。</div>
+        <div class="tree-level-2">
+            <b>Fixed head：</b> 每条 track 一个读写头。
+        </div>
+        <div class="tree-level-2">
+            <b>Movable head：</b> 每个 surface 一个读写头，磁臂移动定位到目标 track。
+        </div>
+        <div class="tree-level-2">
+            Winchester disk 采用密封组件，磁头靠近盘面高速飞行。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-8 Page 9 - 14</span><span class="badge badge-prop">8.2 数据组织：Track、Sector、Cylinder</span></div>
+        <div class="tree-level-2"><b>Track：</b> 每个盘面上的同心圆磁道。</div>
+        <div class="tree-level-2"><b>Sector：</b> track 被划分出的扇区，通常含 header、data、ECC、gap。</div>
+        <div class="tree-level-2"><b>Cylinder：</b> 所有盘面上半径相同的 track 集合。</div>
+        <div class="exam-warning">访问同一柱面上的所有磁道不需要移动读写头，这是选择题常考点。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">3-8 Page 15 - 16</span><span class="badge badge-prop">8.3 Disk Access Time</span></div>
+        <div>读取磁盘块的总时间由定位磁头、等待扇区旋转到磁头下方、实际传输数据三部分构成。</div>
+        <div class="math-block">Access Time = Seek Time + Rotational Latency + Transfer Time</div>
+        <div class="tree-level-2">
+            <b>Seek time：</b> 磁头移动到目标 track 的时间。
+        </div>
+        <div class="tree-level-2">
+            <b>Rotational latency：</b> 等待目标 sector 转到磁头下方的时间。
+        </div>
+        <div class="tree-level-2">
+            <b>Transfer time：</b> 磁头定位后实际传输数据的时间。
+        </div>
+    </div>
+</div>
+</body>
+</html>

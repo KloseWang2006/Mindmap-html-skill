@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>第二章：Arithmetic - 全量解析大纲</title>
+    <style>
+        body {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.65;
+            padding: 30px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 45px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #0f2c59;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 16px;
+            font-size: 2.4em;
+        }
+        .subtitle { text-align: center; color: #5d6d7e; margin: 0 0 34px; font-size: 1.02em; }
+        .section-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 1.35em;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .page-badge {
+            background-color: #e67e22;
+            color: white;
+            padding: 2px 6px;
+            font-size: 0.75em;
+            border-radius: 4px;
+            float: right;
+            font-weight: normal;
+        }
+        .tree-level-1 { margin-left: 20px; border-left: 3px solid #3498db; padding-left: 20px; margin-bottom: 18px; }
+        .tree-level-2 { margin-left: 25px; border-left: 2px solid #bdc3c7; padding-left: 15px; margin-bottom: 10px; }
+        .tree-level-3 { margin-left: 25px; border-left: 2px dashed #dcdde1; padding-left: 15px; color: #57606f; margin-top: 8px; }
+        .node-title { font-weight: bold; color: #2c3e50; font-size: 1.1em; margin-bottom: 5px; }
+        .math-block {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2ecc71;
+            padding: 14px 20px;
+            margin: 10px 0;
+            font-family: "Consolas", "Cambria", "Times New Roman", serif;
+            font-size: 1.05em;
+            color: #111;
+            border-radius: 0 6px 6px 0;
+            overflow-x: auto;
+        }
+        .ai-insight {
+            background-color: #f0f7ff;
+            border-left: 4px solid #00a8ff;
+            padding: 10px 18px;
+            margin: 8px 0;
+            font-size: 0.95em;
+            color: #2f3542;
+            border-radius: 0 6px 6px 0;
+        }
+        .exam-warning {
+            background-color: #fff5f5;
+            border-left: 4px solid #ff4757;
+            padding: 10px 18px;
+            margin: 8px 0;
+            font-size: 0.95em;
+            color: #2f3542;
+            border-radius: 0 6px 6px 0;
+        }
+        .badge { display: inline-block; padding: 2px 6px; font-size: 0.78em; font-weight: bold; border-radius: 4px; color: white; margin-right: 6px; }
+        .badge-def { background-color: #2ed573; }
+        .badge-prop { background-color: #ffa502; }
+        .badge-compare { background-color: #6c5ce7; }
+        code { background-color: #f1f2f6; color: #eb4d4b; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; font-size: 0.92em; }
+        @media (max-width: 720px) {
+            body { padding: 14px; }
+            .container { padding: 22px 18px; }
+            h1 { font-size: 1.8em; }
+            .section-header { font-size: 1.12em; }
+            .tree-level-1, .tree-level-2, .tree-level-3 { margin-left: 10px; }
+            .page-badge { float: none; display: inline-block; margin-left: 8px; }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h1>Chapter 9: Arithmetic</h1>
+    <p class="subtitle">依据第二章 2-1 至 2-9 课件整理的静态思维导图，按整数表示、加法器设计、乘除法算法、IEEE 754 与浮点运算展开。</p>
+
+    <div class="section-header">1. 整数表示 (Integer Representation)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-1 Page 5</span><span class="badge badge-def">1.1 n-bit 整数与无符号解释</span></div>
+        <div>一个 n 位二进制串 <code>B = b(n-1)...b1b0</code> 本身只是 bit；解释为无符号整数时，范围是 0 到 <code>2^n - 1</code>。</div>
+        <div class="math-block">V(B) = b(n-1)2^(n-1) + ... + b1*2 + b0</div>
+        <div class="ai-insight"><strong>复习抓手：</strong> 同一串 bit 按 unsigned、signed-magnitude、one's complement、two's complement 解释会得到不同数值。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-1 Page 6 - 9</span><span class="badge badge-def">1.2 Signed-Magnitude Representation</span></div>
+        <div>最高位表示符号，0 为正、1 为负；其余 n-1 位表示绝对值。</div>
+        <div class="tree-level-2">
+            <b>特点：</b><br>
+            • 正数形式与无符号表示相同<br>
+            • 存在 +0 和 -0 两种零<br>
+            • 表示范围为 <code>-(2^(n-1)-1)</code> 到 <code>+(2^(n-1)-1)</code>
+        </div>
+        <div class="exam-warning"><b>缺点：</b> 加减法要同时比较符号和绝对值大小，硬件控制复杂。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-1 Page 10 - 11</span><span class="badge badge-def">1.3 One's Complement Representation</span></div>
+        <div>负数由对应正数逐位取反得到。</div>
+        <div class="math-block">+18 = 00010010<br>-18 = 11101101</div>
+        <div class="tree-level-2">依然存在 +0 和 -0，因此可表示负数范围与原码类似。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-1 Page 12 - 17</span><span class="badge badge-def">1.4 Two's Complement Representation</span></div>
+        <div>负数由“逐位取反 + 1”得到，是课件强调的最适合加减法的表示法。</div>
+        <div class="math-block">+18 = 00010010<br>-18 = 11101110<br>范围: -2^(n-1) 到 +2^(n-1)-1</div>
+        <div class="tree-level-2">
+            <b>结论：</b><br>
+            • 所有正数在三种有符号表示中相同<br>
+            • 负数表示不同<br>
+            • 补码只有一个 0，且加减法硬件最简单
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-1 Page 18 - 20</span><span class="badge badge-prop">1.5 不同位长之间的转换</span></div>
+        <div class="tree-level-2"><b>原码扩展：</b>符号位移动到新的最左端，中间补 0。</div>
+        <div class="tree-level-2"><b>补码扩展：</b>符号扩展，新增高位填充原符号位。</div>
+        <div class="math-block">8-bit -18 = 11101110<br>16-bit -18 = 1111111111101110</div>
+    </div>
+
+    <div class="section-header">2. 补码加减法 (Addition and Subtraction of Signed Numbers)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-2 Page 3 - 7</span><span class="badge badge-prop">2.1 n-bit 补码加法与溢出</span></div>
+        <div>补码加法直接把符号位当作最高位参加运算，并忽略 MSB 的 carry-out。</div>
+        <div class="math-block">X + Y: add n-bit representations, ignore carry-out from sign bit</div>
+        <div class="tree-level-2">
+            <b>Arithmetic Overflow：</b> 运算结果超出 n 位补码可表示范围。充分必要条件是两个同号数相加得到异号结果。
+        </div>
+        <div class="exam-warning">例：4 位补码中 <code>(+5)+(+4)=+9</code> 超出范围 -8 到 +7，发生溢出。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-2 Page 8 - 12</span><span class="badge badge-prop">2.2 n-bit 补码减法</span></div>
+        <div>做 <code>X - Y</code> 时，先求 <code>Y</code> 的补码相反数，再执行加法。</div>
+        <div class="math-block">X - Y = X + (-Y)<br>-Y = complement(Y) + 1</div>
+        <div class="tree-level-2">课件结论：n 位有符号数加减都可由 n 位二进制加法实现，符号位与其他位一起处理。</div>
+    </div>
+
+    <div class="section-header">3. 加法器硬件 (Ripple-Carry Adder and Fast Adders)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-3 Page 3 - 6</span><span class="badge badge-def">3.1 1-bit Full Adder</span></div>
+        <div>全加器输入 <code>xi, yi, ci</code>，输出和位 <code>si</code> 与进位 <code>ci+1</code>。</div>
+        <div class="math-block">si = xi xor yi xor ci<br>ci+1 = xi*yi + xi*ci + yi*ci</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-3 Page 7 - 15</span><span class="badge badge-prop">3.2 n-bit Ripple-Carry Adder</span></div>
+        <div>多个全加器串接形成 n 位加法器，进位从低位逐级 ripple 到高位。</div>
+        <div class="math-block">s(n-1) delay = (2n-1)T<br>c(n) delay = 2nT</div>
+        <div class="exam-warning">串行进位的核心瓶颈是等待进位传播，位数越长延迟越明显。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-3 Page 16 - 17</span><span class="badge badge-prop">3.3 Addition/Subtraction Logic Unit</span></div>
+        <div>用 XOR 控制 Y 输入是否取反，并设置初始进位 <code>c0</code>，即可在同一硬件中完成加法与减法。</div>
+        <div class="math-block">Add/Sub = 0: Y unchanged, c0 = 0<br>Add/Sub = 1: Y complemented, c0 = 1</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-4 Page 3 - 11</span><span class="badge badge-def">3.4 Carry-Lookahead Addition</span></div>
+        <div>先行进位通过 generate / propagate 函数提前计算各级进位。</div>
+        <div class="math-block">Gi = xi*yi<br>Pi = xi xor yi<br>ci+1 = Gi + Pi*ci</div>
+        <div class="tree-level-2">理论上所有进位可在 3 个门延迟后得到，所有和位可在 4 个门延迟后得到。</div>
+        <div class="ai-insight"><strong>理解重点：</strong> CLA 用更复杂的逻辑网络换时间，本质是从“等待进位”变成“并行预测进位”。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-4 Page 12 - 15</span><span class="badge badge-compare">3.5 构造更长的 CLA</span></div>
+        <div>4-bit CLA 不能无限直接扩展，因为门的 fan-in / fan-out 有物理限制。</div>
+        <div class="tree-level-2">32-bit 加法器可由 8 个 4-bit CLA 级联构成，形成模块化折中。</div>
+    </div>
+
+    <div class="section-header">4. 乘法算法 (Unsigned and Signed Multiplication)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-5 Page 3 - 7</span><span class="badge badge-prop">4.1 无符号乘法与 Array Multiplier</span></div>
+        <div>手算乘法按乘数的每一位决定是否加入被乘数的移位副本，形成 partial products。</div>
+        <div class="math-block">n-bit x n-bit unsigned multiplication -> up to 2n-bit product</div>
+        <div class="tree-level-2">Array multiplier 并行生成和累加部分积，速度高但需要大量 AND 门和 full adders。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-5 Page 8 - 11</span><span class="badge badge-prop">4.2 Sequential Multiplication</span></div>
+        <div>顺序乘法使用一个 n 位加法器，通过 <code>C, A, Q</code> 寄存器循环完成。</div>
+        <div class="tree-level-2">
+            <b>流程：</b>检查 Q0；若 Q0=1 则 A=A+M；随后整体右移；重复 n 次；最终积在 A 和 Q 中。
+        </div>
+        <div class="ai-insight">硬件资源少，但时间按循环次数增长，是面积与速度的折中。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-6 Page 3 - 13</span><span class="badge badge-def">4.3 Booth Algorithm</span></div>
+        <div>Booth 算法直接处理补码有符号乘法，并可减少连续 1 产生的部分积数量。</div>
+        <div class="math-block">Q0 Q-1 = 01: A = A + M<br>Q0 Q-1 = 10: A = A - M<br>Q0 Q-1 = 00 or 11: no add/sub<br>then arithmetic right shift A,Q,Q-1</div>
+        <div class="tree-level-2">
+            <b>优势：</b> 正负乘数统一处理；当乘数有大段连续 1 时，加减次数更少。
+        </div>
+        <div class="exam-warning">Booth 的移位必须是算术右移，最高位保留符号。</div>
+    </div>
+
+    <div class="section-header">5. 整数除法 (Integer Division)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-7 Page 3 - 7</span><span class="badge badge-prop">5.1 Restoring Division</span></div>
+        <div>恢复除法通过试减判断商位：若余数为负，说明试减失败，需要把除数加回去恢复。</div>
+        <div class="tree-level-2">
+            <b>核心循环：</b> 左移 A,Q -> A=A-M -> 若 A&lt;0 则 q0=0 且 A=A+M，否则 q0=1。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-7 Page 8 - 11</span><span class="badge badge-prop">5.2 Non-Restoring Division</span></div>
+        <div>不恢复除法避免每次失败后立即恢复，而是根据当前余数符号决定下一轮加 M 还是减 M。</div>
+        <div class="tree-level-2">若最终余数为负，最后再做一次恢复。</div>
+        <div class="exam-warning">课件结论：没有与 Booth 乘法类似的简单有符号除法统一算法。</div>
+    </div>
+
+    <div class="section-header">6. 浮点数表示 (Floating-Point Numbers and IEEE 754)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-8 Page 3 - 7</span><span class="badge badge-compare">6.1 Fixed-Point 的局限</span></div>
+        <div>定点数的小数点位置固定，适合整数或固定小数，但难以同时表示非常大的数和非常小的数。</div>
+        <div class="ai-insight">浮点数的引入，本质上是把“有效数字”和“数量级”分开存储。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-8 Page 8 - 11</span><span class="badge badge-def">6.2 Floating-Point Representation</span></div>
+        <div>浮点数类似科学计数法，二进制小数点位置可变，必须显式保存指数。</div>
+        <div class="math-block">Value = (-1)^S x M x 2^e<br>E = e + bias</div>
+        <div class="tree-level-2">偏置表示避免负指数的补码形式被误认为很大的正指数。</div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-8 Page 12 - 19</span><span class="badge badge-def">6.3 IEEE 754 Standard</span></div>
+        <div class="tree-level-2">
+            <b>Single Precision：</b> 32 位，1 位符号，8 位 exponent，23 位 fraction，bias=127。
+        </div>
+        <div class="tree-level-2">
+            <b>Double Precision：</b> 64 位，1 位符号，11 位 exponent，52 位 fraction，bias=1023。
+        </div>
+        <div class="tree-level-2">
+            <b>Special Values：</b> ±0、±infinity、NaN、denormal numbers。
+        </div>
+        <div class="math-block">-0.6875 = -1.011 x 2^-1<br>S=1, E=126=01111110, M=011000...</div>
+    </div>
+
+    <div class="section-header">7. 浮点运算 (Floating-Point Number Arithmetic)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-9 Page 3 - 6</span><span class="badge badge-prop">7.1 加减乘除规则</span></div>
+        <div class="tree-level-2">
+            <b>Add/Subtract：</b> 先对阶，右移较小阶码数的尾数；阶码取较大者；尾数相加减；最后规格化。
+        </div>
+        <div class="tree-level-2">
+            <b>Multiply：</b> 阶码相加并减 bias，尾数相乘，确定符号，必要时规格化。
+        </div>
+        <div class="tree-level-2">
+            <b>Divide：</b> 阶码相减并加 bias，尾数相除，确定符号，必要时规格化。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-9 Page 7 - 15</span><span class="badge badge-prop">7.2 Guard Bits 与截断/舍入</span></div>
+        <div>浮点尾数字段长度有限，运算后多出的位必须处理。</div>
+        <div class="tree-level-2">
+            <b>Guard bits：</b> 保留额外低位，减少对阶右移和后续运算导致的精度损失。
+        </div>
+        <div class="tree-level-2">
+            <b>Chopping：</b> 直接丢弃多余位，实现简单但有偏。
+        </div>
+        <div class="tree-level-2">
+            <b>Von Neumann rounding：</b> 若被丢弃部分含 1，则保留部分最低位置 1。
+        </div>
+        <div class="tree-level-2">
+            <b>Rounding：</b> 按最近可表示数舍入，课件用 0舍1入法举例。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">2-9 Page 16 - 21</span><span class="badge badge-def">7.3 规格化与溢出</span></div>
+        <div>规格化保证尾数形如 <code>1.M</code>，移位尾数时要同步调整阶码。</div>
+        <div class="tree-level-2">
+            <b>Mantissa Overflow：</b> 同号尾数相加产生最高位进位，可右移尾数并增加阶码修正。
+        </div>
+        <div class="tree-level-2">
+            <b>Exponent Overflow：</b> 阶码超过范围，才是真正的浮点溢出。
+        </div>
+        <div class="exam-warning">判断题重点：尾数溢出不等于真实溢出；阶码溢出才表示结果超出可表示范围。</div>
+    </div>
+</div>
+</body>
+</html>

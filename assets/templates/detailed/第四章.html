@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>第四章：Instruction Set Architecture - 全量解析大纲</title>
+    <style>
+        body {
+            font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+            background-color: #f5f7fa;
+            color: #2c3e50;
+            line-height: 1.65;
+            padding: 30px;
+            margin: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 45px;
+            border-radius: 12px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05);
+        }
+        h1 {
+            text-align: center;
+            color: #0f2c59;
+            border-bottom: 4px solid #3498db;
+            padding-bottom: 15px;
+            margin-bottom: 16px;
+            font-size: 2.4em;
+        }
+        .subtitle {
+            text-align: center;
+            color: #5d6d7e;
+            margin: 0 0 34px;
+            font-size: 1.02em;
+        }
+        .section-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #ffffff;
+            padding: 12px 20px;
+            border-radius: 6px;
+            font-size: 1.35em;
+            margin-top: 35px;
+            margin-bottom: 20px;
+            font-weight: 600;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        .page-badge {
+            background-color: #e67e22;
+            color: white;
+            padding: 2px 6px;
+            font-size: 0.75em;
+            border-radius: 4px;
+            float: right;
+            font-weight: normal;
+        }
+        .tree-level-1 {
+            margin-left: 20px;
+            border-left: 3px solid #3498db;
+            padding-left: 20px;
+            margin-bottom: 18px;
+        }
+        .tree-level-2 {
+            margin-left: 25px;
+            border-left: 2px solid #bdc3c7;
+            padding-left: 15px;
+            margin-bottom: 10px;
+        }
+        .tree-level-3 {
+            margin-left: 25px;
+            border-left: 2px dashed #dcdde1;
+            padding-left: 15px;
+            color: #57606f;
+        }
+        .node-title {
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1em;
+            margin-bottom: 5px;
+        }
+        .math-block {
+            background-color: #f8f9fa;
+            border-left: 4px solid #2ecc71;
+            padding: 14px 20px;
+            margin: 10px 0;
+            font-family: "Consolas", "Cambria", "Times New Roman", serif;
+            font-size: 1.05em;
+            color: #111;
+            border-radius: 0 6px 6px 0;
+            overflow-x: auto;
+        }
+        .ai-insight {
+            background-color: #f0f7ff;
+            border-left: 4px solid #00a8ff;
+            padding: 10px 18px;
+            margin: 8px 0;
+            font-size: 0.95em;
+            color: #2f3542;
+            border-radius: 0 6px 6px 0;
+        }
+        .exam-warning {
+            background-color: #fff5f5;
+            border-left: 4px solid #ff4757;
+            padding: 10px 18px;
+            margin: 8px 0;
+            font-size: 0.95em;
+            color: #2f3542;
+            border-radius: 0 6px 6px 0;
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 6px;
+            font-size: 0.78em;
+            font-weight: bold;
+            border-radius: 4px;
+            color: white;
+            margin-right: 6px;
+        }
+        .badge-def { background-color: #2ed573; }
+        .badge-prop { background-color: #ffa502; }
+        .badge-compare { background-color: #6c5ce7; }
+        code {
+            background-color: #f1f2f6;
+            color: #eb4d4b;
+            padding: 2px 5px;
+            border-radius: 4px;
+            font-family: Consolas, monospace;
+            font-size: 0.92em;
+        }
+        @media (max-width: 720px) {
+            body { padding: 14px; }
+            .container { padding: 22px 18px; }
+            h1 { font-size: 1.8em; }
+            .section-header { font-size: 1.12em; }
+            .tree-level-1,
+            .tree-level-2,
+            .tree-level-3 { margin-left: 10px; }
+            .page-badge {
+                float: none;
+                display: inline-block;
+                margin-left: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>Chapter 2: Instruction Set Architecture</h1>
+    <p class="subtitle">依据第四章课件整理的静态思维导图，采用分节大纲式排版，突出指令系统、指令格式、寻址方式、子程序与 RISC/CISC 的复习主线。</p>
+
+    <div class="section-header">1. 指令与指令顺序 (Instruction and Instruction Sequencing)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 3 - 4</span>1.1 本节总览：程序到底由哪些基本操作构成</div>
+        <div>课件先给出 4 类最基本的指令行为，它们共同构成程序执行的骨架：</div>
+        <div class="tree-level-2">
+            • memory 和 processor registers 之间的数据传送<br>
+            • arithmetic and logic operations on data<br>
+            • program sequencing and control<br>
+            • I/O transfers
+        </div>
+        <div class="ai-insight">
+            <strong>复习抓手：</strong> 后面所有复杂格式和寻址方式，本质上都在回答两件事：<b>“要做什么操作”</b> 和 <b>“操作数到底从哪里来”</b>。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 5 - 6</span><span class="badge badge-def">1.2 Register Transfer Notation, RTN</span></div>
+        <div>RTN 用来在硬件层级精确描述数据传送与寄存器操作，是理解 ISA 的最底层语言。</div>
+        <div class="tree-level-2">
+            <b>基本记号：</b><br>
+            • 寄存器：<code>R0</code>, <code>R5</code><br>
+            • I/O 寄存器：<code>DATAIN</code>, <code>OUTSTATUS</code><br>
+            • 内存单元：<code>LOC</code>, <code>PLACE</code>, <code>A</code>, <code>VAR2</code><br>
+            • <code>[X]</code> 表示位置 <code>X</code> 中的内容，<code>&larr;</code> 表示把右边的值送往左边目标
+        </div>
+        <div class="math-block">
+            R2 &larr; [LOC]
+            <br>
+            R4 &larr; [R2] + [R3]
+        </div>
+        <div class="tree-level-2">
+            右侧表达式始终表示“值”，左侧始终表示“目标位置”。这让我们能把“取数、运算、写回”三个动作分得非常清楚。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 7 - 8</span><span class="badge badge-def">1.3 Assembly-Language Notation</span></div>
+        <div>RTN 适合描述硬件动作，但要写程序还需要更接近机器指令的表示法，于是就有了 assembly language。</div>
+        <div class="tree-level-2">
+            <b>核心特点：</b><br>
+            • 一条指令同时给出 operation 和 operands<br>
+            • 课件示例直接使用英文单词：<code>Load</code>, <code>Store</code>, <code>Add</code><br>
+            • 商用处理器通常使用 mnemonic，如 <code>LD</code>, <code>ST</code>, <code>ADD</code>
+        </div>
+        <div class="math-block">
+            Load R2, LOC
+            <br>
+            Add R4, R2, R3
+        </div>
+        <div class="ai-insight">
+            <strong>理解重点：</strong> RTN 更像“动作语义”，Assembly 更像“程序写法”；两者描述的是同一件事，只是抽象层级不同。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 9 - 14</span><span class="badge badge-compare">1.4 RISC 与 CISC 的指令观</span></div>
+        <div class="tree-level-2">
+            <b>RISC：</b> one-word instructions，指令少而简单，算术/逻辑操作要求操作数在寄存器中，典型代表有 ARM、MIPS、RISC-V。
+        </div>
+        <div class="tree-level-2">
+            <b>CISC：</b> multi-word instructions，允许直接对内存操作数进行处理，指令数量更多，单条指令常需要更多周期，代表是 x86。
+        </div>
+        <div class="exam-warning">
+            <b>这里是全章主线之一：</b> 课件后面讲的指令长度、操作数位置、寻址方式，其实都和这两种设计哲学直接相连。
+        </div>
+        <div class="tree-level-2">
+            <b>RISC 的 load/store architecture：</b><br>
+            只有 <code>Load</code> 和 <code>Store</code> 访问内存；真正的算术逻辑运算在寄存器之间完成。
+        </div>
+        <div class="math-block">
+            C = A + B
+            <br><br>
+            Load R2, A
+            <br>
+            Load R3, B
+            <br>
+            Add R4, R2, R3
+            <br>
+            Store R4, C
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 15 - 17</span>1.5 Instruction Execution, Straight-Line Sequencing 与 Branching</div>
+        <div>程序默认按顺序执行。若字长为 32 位且存储器按字节编址，那么 PC 会按 <code>i, i + 4, i + 8 ...</code> 这种方式递增。</div>
+        <div class="tree-level-2">
+            <b>执行过程两阶段：</b><br>
+            • Instruction Fetch<br>
+            • Instruction Execute
+        </div>
+        <div class="math-block">
+            [PC] = i
+            <br>
+            [PC] = i + 4
+            <br>
+            ...
+        </div>
+        <div class="tree-level-2">
+            <b>Branching：</b> 把新的地址装入 PC，从而打破 straight-line sequencing，实现循环与条件控制。
+        </div>
+        <div class="tree-level-3">
+            • branch target 是跳转后的目标地址<br>
+            • conditional branch 需要比较寄存器内容或依赖 condition codes<br>
+            • 典型写法：<code>Branch_if_[R4]&gt;[R5] Loop</code>
+        </div>
+    </div>
+
+    <div class="section-header">2. 指令格式 (Instruction Formats)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 18 - 20</span><span class="badge badge-def">2.1 Machine Instruction 的基本组成</span></div>
+        <div>Machine instruction 是处理器电路真正执行的指令；Instruction set 则是处理器全部可执行指令的集合。</div>
+        <div class="tree-level-2">
+            <b>Elements of a Machine Instruction：</b><br>
+            • <code>Opcode</code>：规定做什么操作<br>
+            • source operand reference：源操作数在哪里<br>
+            • result operand reference：结果应该写到哪里
+        </div>
+        <div class="tree-level-2">
+            源操作数和结果操作数可以来自三类位置：main/virtual memory、processor register、I/O device。
+        </div>
+        <div class="math-block">
+            Instruction = Opcode field + Address field
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 21 - 22</span><span class="badge badge-prop">2.2 常见地址数字段格式</span></div>
+        <div class="tree-level-2">
+            <b>Zero-address instruction：</b> 不显式给出地址，常与栈式结构配合。
+        </div>
+        <div class="tree-level-2">
+            <b>One-address instruction：</b> 默认另一个操作数在累加器 AC 中。
+            <div class="math-block">[AC] OP [A] &rarr; AC</div>
+        </div>
+        <div class="tree-level-2">
+            <b>Two-address instruction：</b>
+            <div class="math-block">[A1] OP [A2] &rarr; A1</div>
+            A1 既是目的位置，也是参与运算的一个源操作数。
+        </div>
+        <div class="tree-level-2">
+            <b>Three-address instruction：</b>
+            <div class="math-block">[A2] OP [A3] &rarr; A1</div>
+            结果位置可以与两个源操作数完全分离，表达能力最强，但位数开销也更大。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 23 - 30</span><span class="badge badge-prop">2.3 Instruction Length 与 Opcode Format</span></div>
+        <div class="tree-level-2">
+            <b>Instruction length：</b><br>
+            • fixed length：所有指令等长，译码更直接<br>
+            • variable length：不同指令长度不同，编码更灵活
+        </div>
+        <div class="tree-level-2">
+            <b>Fixed-length opcode：</b> 若 opcode 占 <code>k</code> 位，则最多表示 <code>2^k</code> 种操作；若地址字段占 <code>n</code> 位，则可寻址 <code>2^n</code> 个单元。
+        </div>
+        <div class="tree-level-2">
+            <b>Variable-length opcode / Expanding Opcode：</b> 在总指令长度固定时，让 opcode 和 address field 彼此“借位”，从而同时支持不同地址数的指令。
+        </div>
+        <div class="exam-warning">
+            <b>课件经典设计题：</b> 16-bit instruction、4-bit operand address 时，示例设计结果是：
+            <div class="tree-level-3">
+                • 15 条 three-address instructions<br>
+                • 14 条 two-address instructions<br>
+                • 31 条 one-address instructions<br>
+                • 16 条 zero-address instructions
+            </div>
+        </div>
+        <div class="ai-insight">
+            <strong>本质理解：</strong> 地址字段越多，留给 opcode 的位数越少；地址字段越少，opcode 就能更长，容纳更多同类指令编码。
+        </div>
+    </div>
+
+    <div class="section-header">3. 寻址方式 (Addressing Modes)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 31 - 32</span>3.1 寻址方式到底解决什么问题</div>
+        <div>Addressing mode 研究的是：<b>指令中地址字段的位应该如何解释，才能确定操作数的真实位置。</b></div>
+        <div class="tree-level-2">
+            这里的核心符号是 <code>EA</code>，即 <b>Effective Address</b>，表示最终真正访问的有效地址。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 33</span><span class="badge badge-def">3.2 Immediate mode</span></div>
+        <div>操作数直接写在指令内部。</div>
+        <div class="math-block">Add R4, R6, #200</div>
+        <div class="tree-level-2">
+            <b>用途：</b> 定义常量、初始化变量。
+        </div>
+        <div class="tree-level-2">
+            <b>优点：</b> 除取指外不需要额外访存。
+        </div>
+        <div class="tree-level-2">
+            <b>缺点：</b> 只能提供常量，而且常量大小受地址字段位数限制。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 34 - 35</span><span class="badge badge-def">3.3 Absolute mode / Direct mode</span></div>
+        <div>操作数位于某个内存单元，而该地址直接写在指令里。</div>
+        <div class="math-block">EA = A</div>
+        <div class="tree-level-2">
+            <b>示例：</b> <code>Load R2, NUM1</code>
+        </div>
+        <div class="tree-level-2">
+            <b>用途：</b> 访问编译时地址已知的全局变量。
+        </div>
+        <div class="tree-level-2">
+            <b>优点：</b> 只需一次访存，不需要额外计算。
+        </div>
+        <div class="tree-level-2">
+            <b>缺点：</b> 总是指向固定位置，可用地址空间有限。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 36 - 37</span><span class="badge badge-def">3.4 Indirect mode</span></div>
+        <div>指令中的地址字段并不是最终操作数地址，而是“存放操作数地址的那个地址”。</div>
+        <div class="math-block">EA = [A]</div>
+        <div class="tree-level-2">
+            这种方式在 CISC 风格机器中更常见，也可扩展成多级间接寻址：
+            <div class="math-block">EA = [...[A]...]</div>
+        </div>
+        <div class="tree-level-2">
+            <b>优点：</b> 地址空间非常大，若字长为 N，则可扩展到 <code>2^N</code> 级别。
+        </div>
+        <div class="tree-level-2">
+            <b>缺点：</b> 先取地址、再取数值，至少需要两次访存。
+        </div>
+        <div class="tree-level-2">
+            课件还提到 indirect flag <code>I</code>：若 <code>I = 0</code>，当前字给出 EA；若 <code>I = 1</code>，则继续再做一层间接。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 38 - 39</span><span class="badge badge-def">3.5 Register mode</span></div>
+        <div>操作数就在处理器寄存器中。</div>
+        <div class="math-block">EA = Ri</div>
+        <div class="tree-level-2">
+            <b>示例：</b> <code>Add R4, R2, R3</code>
+        </div>
+        <div class="tree-level-2">
+            <b>优点：</b> 地址字段短，无需访问内存，速度快。
+        </div>
+        <div class="tree-level-2">
+            <b>缺点：</b> 地址空间非常有限，因为寄存器数量有限。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 40 - 43</span><span class="badge badge-def">3.6 Register Indirect mode</span></div>
+        <div>寄存器里存放的不是数据本身，而是某个内存操作数的地址。</div>
+        <div class="math-block">EA = [Ri]</div>
+        <div class="tree-level-2">
+            <b>示例：</b> <code>Load R2, (R5)</code>
+        </div>
+        <div class="tree-level-2">
+            它适合遍历列表、数组或连续数据区，因为只要更新寄存器中的指针值，就能访问下一项。
+        </div>
+        <div class="tree-level-2">
+            <b>优势：</b> 不必在指令中放完整内存地址，既保留了访问内存的能力，又减少了指令位宽压力。
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 44 - 49</span><span class="badge badge-def">3.7 Indexed mode</span></div>
+        <div>有效地址由“寄存器中的基准值 + 指令中的偏移量”共同形成。</div>
+        <div class="math-block">EA = X + [Ri]</div>
+        <div class="tree-level-2">
+            其中 <code>X</code> 是指令中给出的常量偏移，<code>Ri</code> 常作为 index register；生成 EA 时寄存器本身不变。
+        </div>
+        <div class="tree-level-2">
+            <b>典型用途：</b> 访问数组、记录、二维表等“相对某参考点”组织的数据结构。
+        </div>
+        <div class="tree-level-2">
+            <b>变体 1：Base with index</b>
+            <div class="math-block">EA = [Ri] + [Rj]</div>
+        </div>
+        <div class="tree-level-2">
+            <b>变体 2：Base with index and offset</b>
+            <div class="math-block">EA = [Ri] + [Rj] + X</div>
+        </div>
+    </div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 50</span><span class="badge badge-def">3.8 Relative mode</span></div>
+        <div>Relative mode 实际上是把 PC 当作 index register 来使用。</div>
+        <div class="math-block">EA = [PC] + X</div>
+        <div class="tree-level-2">
+            其中 <code>X</code> 是有符号偏移量。
+        </div>
+        <div class="tree-level-2">
+            <b>用途：</b><br>
+            • 访问相对当前位置的数据<br>
+            • 在 branch 指令中表示 target address
+        </div>
+        <div class="ai-insight">
+            <strong>复习理解：</strong> Relative addressing 的优势在于不用把完整目标地址硬编码进指令，只需记录“离当前位置偏多少”。
+        </div>
+    </div>
+
+    <div class="section-header">4. 子程序 (Subroutines)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 51 - 54</span><span class="badge badge-prop">4.1 子程序的作用与返回机制</span></div>
+        <div>如果某个任务会被多次执行，例如数学函数计算、排序、公共处理逻辑，就没有必要在主程序中反复复制同一段代码，而应把它封装成 subroutine。</div>
+        <div class="tree-level-2">
+            <b>调用：</b> 使用 <code>Call</code> 指令跳入子程序。
+        </div>
+        <div class="tree-level-2">
+            <b>返回：</b> 子程序最后通过 <code>Return</code> 指令返回调用点之后的位置。
+        </div>
+        <div class="exam-warning">
+            <b>Subroutine Linkage 是关键：</b> 同一个子程序可能从不同位置被调用，所以系统必须保存“调用之后应该回到哪里”。
+        </div>
+        <div class="tree-level-2">
+            <b>最简单的方案：</b> 使用 <code>link register</code> 保存返回地址。
+        </div>
+        <div class="tree-level-3">
+            • 执行 <code>Call</code> 时，先把更新后的 PC 保存到 link register<br>
+            • 然后 branch 到子程序入口<br>
+            • 执行 <code>Return</code> 时，再跳回 link register 中保存的地址
+        </div>
+    </div>
+
+    <div class="section-header">5. RISC and CISC Styles 总结对照</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 55 - 58</span><span class="badge badge-compare">5.1 两种指令系统风格的核心差异</span></div>
+        <div class="tree-level-2">
+            <b>RISC characteristics：</b><br>
+            • simple addressing modes<br>
+            • all instructions fitting in a single word<br>
+            • fewer total instructions<br>
+            • arithmetic/logic operations on registers<br>
+            • load/store architecture for data transfers<br>
+            • more instructions executed per program
+        </div>
+        <div class="tree-level-2">
+            <b>CISC characteristics：</b><br>
+            • more complex addressing modes<br>
+            • instructions spanning more than one word<br>
+            • more instructions in the instruction set<br>
+            • arithmetic/logic operations on memory<br>
+            • memory-to-memory data transfers<br>
+            • fewer instructions executed per program
+        </div>
+        <div class="ai-insight">
+            <strong>一句话收束全章：</strong> RISC 用“更多但更简单”的指令换取更快、更规则的硬件实现；CISC 用“更复杂但更强大”的单条指令换取更紧凑的程序表达。
+        </div>
+    </div>
+
+    <div class="section-header">6. 课后题提示 (Homework Hint)</div>
+
+    <div class="tree-level-1">
+        <div class="node-title"><span class="page-badge">Page 59 - 60</span>6.1 Homework 的真正考点</div>
+        <div>最后两页作业都围绕 <b>expanding opcode 设计</b> 展开，本质上考的是“在总位数固定时，如何在不同地址数指令之间分配 opcode 空间”。</div>
+        <div class="tree-level-2">
+            <b>做题思路：</b><br>
+            • 先由 instruction length 和 address field size 算出每类指令最多能留多少位给 opcode<br>
+            • 先满足高地址数指令的编码需求，再把剩余编码空间扩展给低地址数指令<br>
+            • 最后统计 each type of instruction 的 maximum number
+        </div>
+    </div>
+
+</div>
+</body>
+</html>

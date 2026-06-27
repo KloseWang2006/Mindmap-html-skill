@@ -1,0 +1,4 @@
+interface:
+  display_name: "Lecture Mindmap HTML"
+  short_description: "Generate study-map HTML from lecture slides"
+  default_prompt: "Use $lecture-mindmap-html to turn these lecture slides into outline and detailed HTML mind maps."

@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>第四章 指令系统体系结构 - 脉络大纲</title>
+    <style>
+        :root {
+            --bg: #f8f9fb;
+            --card-bg: #ffffff;
+            --text: #2c3e50;
+            --text-secondary: #5a6c7d;
+            --accent: #3b6ff5;
+            --accent-light: #eef3ff;
+            --border: #e2e8f0;
+            --shadow: 0 1px 3px rgba(0,0,0,.06), 0 1px 2px rgba(0,0,0,.04);
+            --radius: 10px;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "PingFang SC", "Microsoft YaHei", sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+            padding: 40px 24px 80px;
+        }
+        .container { max-width: 900px; margin: 0 auto; }
+        .header { text-align: center; margin-bottom: 48px; }
+        .chapter-tag {
+            display: inline-block;
+            font-size: 13px;
+            font-weight: 600;
+            letter-spacing: .08em;
+            color: var(--accent);
+            background: var(--accent-light);
+            padding: 4px 14px;
+            border-radius: 20px;
+            margin-bottom: 16px;
+        }
+        .header h1 { font-size: 32px; font-weight: 700; margin-bottom: 8px; }
+        .subtitle { font-size: 15px; color: var(--text-secondary); }
+        .flow-diagram, .overview, .section, .comparison {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            box-shadow: var(--shadow);
+        }
+        .flow-diagram { padding: 32px 28px; margin-bottom: 40px; text-align: center; }
+        .flow-diagram h3 { font-size: 15px; font-weight: 700; margin-bottom: 24px; color: var(--text-secondary); }
+        .flow-row { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; }
+        .flow-box {
+            display: inline-block;
+            padding: 10px 18px;
+            border-radius: 8px;
+            font-size: 13px;
+            font-weight: 700;
+            min-width: 135px;
+        }
+        .flow-box small { display: block; font-size: 11px; font-weight: 400; margin-top: 2px; }
+        .flow-connector { font-size: 13px; color: #9ca3af; padding: 0 7px; white-space: nowrap; }
+        .flow-box.seq { background: #f3f4f6; color: #6b7280; }
+        .flow-box.format { background: #fffbeb; color: #d97706; }
+        .flow-box.addr { background: #f5f3ff; color: #7c3aed; }
+        .flow-box.sub { background: #eef2ff; color: #4f46e5; }
+        .flow-box.style { background: #ecfdf5; color: #059669; }
+        .overview {
+            padding: 28px 32px;
+            margin-bottom: 40px;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 22px;
+            align-items: center;
+            justify-content: center;
+        }
+        .flow-item { display: flex; align-items: center; gap: 8px; font-size: 15px; font-weight: 600; }
+        .flow-arrow { color: #c0c8d4; font-size: 20px; font-weight: 300; }
+        .flow-dot { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+        .section { margin-bottom: 24px; overflow: hidden; transition: box-shadow .2s; }
+        .section:hover { box-shadow: 0 4px 12px rgba(0,0,0,.08); }
+        .section-header { display: flex; align-items: center; gap: 14px; padding: 22px 28px; border-bottom: 1px solid var(--border); }
+        .num {
+            font-size: 13px;
+            font-weight: 700;
+            color: #fff;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+        }
+        .section-header h2 { font-size: 18px; font-weight: 700; flex: 1; }
+        .badge { font-size: 11px; font-weight: 600; letter-spacing: .04em; padding: 4px 10px; border-radius: 14px; white-space: nowrap; }
+        .section-body { padding: 24px 28px 28px; }
+        .core-question {
+            background: #fefce8;
+            border-left: 3px solid #eab308;
+            padding: 10px 16px;
+            border-radius: 0 6px 6px 0;
+            margin-bottom: 22px;
+            font-size: 14px;
+            font-weight: 600;
+            color: #92400e;
+        }
+        .core-question span { font-weight: 400; color: #a16207; }
+        .subsection { margin-bottom: 16px; }
+        .subsection:last-child { margin-bottom: 0; }
+        .subsection-title { font-size: 14px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 6px; }
+        .subsection-title::before { content: ''; width: 5px; height: 5px; border-radius: 50%; flex-shrink: 0; }
+        ul { list-style: none; padding-left: 18px; }
+        li { font-size: 14px; color: var(--text-secondary); position: relative; padding: 2px 0 2px 14px; }
+        li::before { content: '-'; position: absolute; left: 0; color: #cbd5e1; }
+        li em { font-style: normal; font-weight: 600; color: #4b5563; }
+        .s1 .num, .s1 .subsection-title::before { background: #6b7280; }
+        .s1 .badge { color: #6b7280; background: #f3f4f6; }
+        .s2 .num, .s2 .subsection-title::before { background: #d97706; }
+        .s2 .badge { color: #d97706; background: #fffbeb; }
+        .s3 .num, .s3 .subsection-title::before { background: #7c3aed; }
+        .s3 .badge { color: #7c3aed; background: #f5f3ff; }
+        .s4 .num, .s4 .subsection-title::before { background: #4f46e5; }
+        .s4 .badge { color: #4f46e5; background: #eef2ff; }
+        .s5 .num, .s5 .subsection-title::before { background: #059669; }
+        .s5 .badge { color: #059669; background: #ecfdf5; }
+        .comparison { padding: 28px; margin-top: 40px; }
+        .comparison h3 { font-size: 17px; font-weight: 700; margin-bottom: 18px; text-align: center; }
+        table { width: 100%; border-collapse: collapse; font-size: 14px; }
+        th { background: #f1f5f9; font-weight: 700; padding: 10px 14px; text-align: left; border-bottom: 2px solid var(--border); }
+        td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text-secondary); vertical-align: top; }
+        tr:last-child td { border-bottom: none; }
+        td:first-child { font-weight: 600; color: var(--text); }
+        code { background: #f1f2f6; color: #eb4d4b; padding: 2px 5px; border-radius: 4px; font-family: Consolas, monospace; }
+        .footer { text-align: center; margin-top: 48px; font-size: 13px; color: #c0c8d4; }
+        @media (max-width: 640px) {
+            body { padding: 24px 12px 60px; }
+            .header h1 { font-size: 24px; }
+            .section-header { padding: 16px 18px; }
+            .section-body { padding: 18px 18px 22px; }
+            .overview { padding: 20px; }
+            .flow-row { flex-direction: column; gap: 4px; }
+            .flow-connector { transform: rotate(90deg); }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="header">
+        <div class="chapter-tag">计算机组成原理 · 第四章</div>
+        <h1>指令系统体系结构</h1>
+        <p class="subtitle">Instruction Set Architecture - 从指令语义到格式、寻址、子程序与 RISC/CISC 风格</p>
+    </div>
+
+    <div class="flow-diagram">
+        <h3>核心演进逻辑：ISA 规定“程序能说什么”，也规定“硬件必须懂什么”</h3>
+        <div class="flow-row">
+            <div class="flow-box seq">指令语义<br><small>做什么、按何顺序做</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box format">指令格式<br><small>操作码与地址字段</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box addr">寻址方式<br><small>操作数从哪里来</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box sub">子程序<br><small>调用与返回</small></div>
+            <span class="flow-connector">&rarr;</span>
+            <div class="flow-box style">RISC/CISC<br><small>设计哲学</small></div>
+        </div>
+    </div>
+
+    <div class="overview">
+        <div class="flow-item"><span class="flow-dot" style="background:#6b7280;"></span>指令顺序</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#d97706;"></span>指令格式</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#7c3aed;"></span>寻址方式</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#4f46e5;"></span>子程序</div>
+        <span class="flow-arrow">&rarr;</span>
+        <div class="flow-item"><span class="flow-dot" style="background:#059669;"></span>RISC/CISC</div>
+    </div>
+
+    <div class="section s1">
+        <div class="section-header">
+            <div class="num">1</div>
+            <h2>指令与顺序：从 RTN 到汇编，再到 PC 控制流</h2>
+            <span class="badge">Sequencing</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>一条机器指令如何描述“做什么”和“下一步做哪条”？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">指令的基本行为</div>
+                <ul>
+                    <li>程序由数据传送、算术逻辑操作、程序顺序控制和 I/O 传送构成。</li>
+                    <li><em>RTN</em> 用寄存器、内存和赋值箭头描述硬件级动作，如 <code>R2 &larr; [LOC]</code>。</li>
+                    <li><em>Assembly language</em> 用助记符描述机器指令，如 <code>Load</code>、<code>Store</code>、<code>Add</code>。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">PC 与分支</div>
+                <ul>
+                    <li>默认情况下程序按 straight-line sequencing 执行。</li>
+                    <li>若每条指令 4 bytes，PC 通常按 <code>i, i+4, i+8...</code> 递增。</li>
+                    <li>Branching 通过把新地址装入 PC 打破顺序执行，实现条件控制和循环。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s2">
+        <div class="section-header">
+            <div class="num">2</div>
+            <h2>指令格式：Opcode 说明操作，地址字段说明操作数</h2>
+            <span class="badge">Formats</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>机器指令的 bit 位如何在“操作种类”和“操作数位置”之间分配？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">Machine instruction 的组成</div>
+                <ul>
+                    <li><em>Opcode</em>：规定执行什么操作。</li>
+                    <li><em>Source operand reference</em>：说明源操作数在哪里。</li>
+                    <li><em>Result operand reference</em>：说明结果写到哪里。</li>
+                    <li>操作数可能来自主存/虚存、处理器寄存器或 I/O 设备。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">地址数字段与编码取舍</div>
+                <ul>
+                    <li>Zero-address 常与栈式结构配合。</li>
+                    <li>One-address 常默认另一个操作数在 AC 中。</li>
+                    <li>Two-address 中一个地址既是源操作数又是结果位置。</li>
+                    <li>Three-address 表达力强，但地址字段占用更多 bit。</li>
+                    <li>Expanding opcode 用不同长度 opcode 支持不同地址数指令。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s3">
+        <div class="section-header">
+            <div class="num">3</div>
+            <h2>寻址方式：把指令字段解释成有效地址 EA</h2>
+            <span class="badge">Addressing</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>指令中的地址字段如何一步步变成真正访问的操作数位置？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">EA 的核心</div>
+                <ul>
+                    <li><em>Effective Address, EA</em> 是最终真正访问的有效地址。</li>
+                    <li>寻址方式本质是在解释指令地址字段：它是常数、内存地址、寄存器编号，还是偏移量？</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">常见寻址方式</div>
+                <ul>
+                    <li><em>Immediate</em>：操作数就在指令中，适合常量。</li>
+                    <li><em>Absolute/Direct</em>：地址字段就是内存地址，<code>EA=A</code>。</li>
+                    <li><em>Indirect</em>：地址字段指向“存放地址的位置”，<code>EA=[A]</code>。</li>
+                    <li><em>Register</em>：操作数在寄存器中，速度快但寄存器数量有限。</li>
+                    <li><em>Register Indirect</em>：寄存器中存放内存地址，适合指针和数组遍历。</li>
+                    <li><em>Indexed</em>：基址/索引加偏移，适合数组元素访问。</li>
+                    <li><em>Relative</em>：以 PC 为基准加 offset，适合分支目标。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s4">
+        <div class="section-header">
+            <div class="num">4</div>
+            <h2>子程序：调用时保存返回地址，返回时恢复控制流</h2>
+            <span class="badge">Subroutines</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>程序如何跳到一段可复用代码，并在执行完后回到原位置？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">调用与返回</div>
+                <ul>
+                    <li>Subroutine 让一段代码可被多个位置调用，减少重复。</li>
+                    <li>Call 需要保存返回地址，并把 PC 改为子程序入口。</li>
+                    <li>Return 需要把返回地址重新装入 PC。</li>
+                    <li>返回地址可放在 link register、栈或指定内存位置。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="section s5">
+        <div class="section-header">
+            <div class="num">5</div>
+            <h2>RISC 与 CISC：指令复杂度与硬件/软件分工</h2>
+            <span class="badge">Styles</span>
+        </div>
+        <div class="section-body">
+            <div class="core-question">核心问题：<span>指令系统应当简单规整，还是让单条指令承担更多工作？</span></div>
+            <div class="subsection">
+                <div class="subsection-title">RISC</div>
+                <ul>
+                    <li>指令少而规整，常见 one-word instructions。</li>
+                    <li>采用 load/store architecture：只有 Load/Store 访问内存。</li>
+                    <li>算术逻辑操作通常在寄存器之间完成，便于流水线设计。</li>
+                </ul>
+            </div>
+            <div class="subsection">
+                <div class="subsection-title">CISC</div>
+                <ul>
+                    <li>指令数量更多，常见 multi-word instructions。</li>
+                    <li>允许单条指令直接处理内存操作数。</li>
+                    <li>单条指令语义更复杂，硬件译码和执行控制压力更大。</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <div class="comparison">
+        <h3>第四章核心对照</h3>
+        <table>
+            <thead>
+                <tr><th>主题</th><th>一句话抓手</th><th>典型考点</th></tr>
+            </thead>
+            <tbody>
+                <tr><td>RTN vs Assembly</td><td>RTN 描述硬件动作，Assembly 描述程序指令</td><td>把汇编语句翻译成寄存器传送语义</td></tr>
+                <tr><td>指令格式</td><td>Opcode 与地址字段竞争有限 bit 位</td><td>地址数、指令长度、扩展操作码设计</td></tr>
+                <tr><td>寻址方式</td><td>所有模式都在求 EA 或直接给操作数</td><td>Immediate、Indirect、Indexed、Relative 的区分</td></tr>
+                <tr><td>子程序</td><td>Call 改 PC 并保存返回地址，Return 恢复 PC</td><td>返回地址保存位置与控制流变化</td></tr>
+                <tr><td>RISC/CISC</td><td>简单规整 vs 单条复杂</td><td>load/store architecture 与 memory operands</td></tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div class="footer">第四章脉络大纲 · 依据 ISA 课件与现有全量解析大纲整理</div>
+</div>
+</body>
+</html>
