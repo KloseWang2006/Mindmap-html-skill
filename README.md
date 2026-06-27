@@ -1,6 +1,6 @@
 # lecture-mindmap-html
 
-一个给 Codex 用的本机 skill，专门把课件、PDF、PPT 课件导出和已有章节样例整理成静态 HTML 思维导图。
+一个给 Codex 用的 skill，专门把课件、PDF、PPT 课件导出和已有章节样例整理成静态 HTML 思维导图。
 
 ## 能做什么
 
@@ -18,12 +18,6 @@
 用 $lecture-mindmap-html 根据这些课件生成脉络大纲版和细致版 HTML 思维导图
 ```
 
-如果只要脉络版：
-
-```text
-用 $lecture-mindmap-html 只生成脉络大纲版 HTML，并且优先套用内置模板
-```
-
 ## 目录结构
 
 - `SKILL.md`：skill 的核心说明
@@ -34,4 +28,4 @@
 
 ## 仓库说明
 
-这个仓库保存的是 skill 本体和内置模板资产。它不包含课程原始课件，适合直接给 Codex 复用，也适合 GitHub 上公开分享模板和流程。
+这个仓库保存的是 skill 本体和内置模板资产。它不包含课程原始课件，适合直接给 Codex 复用。
